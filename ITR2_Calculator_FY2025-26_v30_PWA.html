@@ -3,14 +3,685 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>ITR Calculator FY 2025-26</title>
+    <title>ITR2 Tax Calculator FY 2025-26</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .label-hint {
+            color: #999;
+            font-size: 0.85em;
+            margin-left: 5px;
+        }
+
+        input[type="number"],
+        input[type="text",
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-reset {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+
+        .result-section {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-box {
+            background: #f8f9ff;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .result-value {
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .tax-payable {
+            font-size: 1.8em;
+            color: #667eea;
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid #667eea;
+        }
+
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c00;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .info-box {
+            background: #e8f4f8;
+            color: #006b9e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #006b9e;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .help-icon {
+            cursor: help;
+            color: #667eea;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85em;
+            font-weight: normal;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <form>
-        <input type="text" name="income"/>
-        <input type="number" name="age"/>
-        <input type="checkbox" name="terms"/>
-        <input type="submit" value="Calculate"/>
-    </form>
+    <div class="container">
+        <h1>🧮 ITR2 Tax Calculator</h1>
+        <p class="subtitle">Financial Year 2025-26 (AY 2026-27)</p>
+
+        <div class="info-box">
+            <strong>ℹ️ Note:</strong> This calculator is for ITR-2 filers (individual & HUF) with income from salary, business, house property, and other sources.
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+
+        <form id="taxForm">
+            <!-- Income Section -->
+            <div class="form-section">
+                <div class="section-title">Income Details</div>
+
+                <div class="form-group">
+                    <label>
+                        Salary Income (₹)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Salary, wages, pension, gratuity received during the financial year</span>
+                        </span>
+                    </label>
+                    <input type="number" id="salary" placeholder="Enter salary income" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Business/Profession Income (₹)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Net profit from business or profession (after expenses)</span>
+                        </span>
+                    </label>
+                    <input type="number" id="business" placeholder="Enter business income" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        House Property Income (₹)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Rental income from house properties (annual rent minus deductions)</span>
+                        </span>
+                    </label>
+                    <input type="number" id="houseProperty" placeholder="Enter house property income" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Capital Gains (₹)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Long-term capital gains (taxed at 20%) or short-term capital gains (at slab rate)</span>
+                        </span>
+                    </label>
+                    <input type="number" id="capitalGains" placeholder="Enter capital gains" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Other Income (₹)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Interest, dividends, rental income from other sources, lottery winnings, etc.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="otherIncome" placeholder="Enter other income" step="0.01" value="0"/>
+                </div>
+            </div>
+
+            <!-- Deductions Section -->
+            <div class="form-section">
+                <div class="section-title">Deductions (Section 80)</div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80C (Life Insurance, PF, NSC, Tuition)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Max ₹1,50,000. Covers LIC premiums, EPF contributions, NSC, tuition fees</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80C" placeholder="Enter 80C deduction" min="0" step="0.01" max="150000" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80CCC (Pension Contributions)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Max ₹1,50,000. Pension contributions (in addition to 80C)</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80CCC" placeholder="Enter 80CCC deduction" min="0" step="0.01" max="150000" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80CCD (NPS Contributions)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Employee: up to 10% of salary; Self-employed: up to 20% of income</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80CCD" placeholder="Enter 80CCD deduction" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80D (Medical Insurance)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Health insurance premium. Max ₹25,000 (₹50,000 if age 60+)</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80D" placeholder="Enter 80D deduction" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80E (Education Loan Interest)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">Interest on education loan. No limit on deduction</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80E" placeholder="Enter 80E deduction" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Section 80G (Charitable Donations)
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">50% or 100% of donation depending on organization</span>
+                        </span>
+                    </label>
+                    <input type="number" id="section80G" placeholder="Enter 80G deduction" min="0" step="0.01" value="0"/>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Other Deductions
+                        <span class="tooltip help-icon">?
+                            <span class="tooltiptext">80TTA (savings interest), 80U (disability), etc.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="otherDeductions" placeholder="Enter other deductions" min="0" step="0.01" value="0"/>
+                </div>
+            </div>
+
+            <!-- Personal Details Section -->
+            <div class="form-section">
+                <div class="section-title">Personal Details</div>
+
+                <div class="form-group">
+                    <label>Age Category</label>
+                    <select id="ageCategory">
+                        <option value="normal">Below 60 years</option>
+                        <option value="senior">60 - 80 years (Senior Citizen)</option>
+                        <option value="supersenior">Above 80 years (Super Senior)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Residential Status</label>
+                    <select id="residentialStatus">
+                        <option value="resident">Resident of India</option>
+                        <option value="nri">NRI (Non-Resident Indian)</option>
+                        <option value="fnri">Foreign National</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="salariedPerson"/>
+                    <label for="salariedPerson">I am a salaried person</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="businessOwner"/>
+                    <label for="businessOwner">I own a business/profession</label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="button-group">
+                <button type="submit" class="btn-calculate">Calculate Tax</button>
+                <button type="reset" class="btn-reset">Reset Form</button>
+            </div>
+        </form>
+
+        <!-- Results Section -->
+        <div class="result-section" id="resultSection">
+            <div class="section-title">📊 Tax Calculation Results</div>
+
+            <div class="result-box">
+                <div class="result-row">
+                    <span class="result-label">Gross Total Income:</span>
+                    <span class="result-value">₹<span id="gti">0</span></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Total Deductions:</span>
+                    <span class="result-value">₹<span id="totalDeductions">0</span></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Taxable Income:</span>
+                    <span class="result-value">₹<span id="taxableIncome">0</span></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Standard Deduction:</span>
+                    <span class="result-value">₹<span id="standardDeduction">0</span></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Income Tax:</span>
+                    <span class="result-value">₹<span id="incomeTax">0</span></span>
+                </div>
+                <div class="result-row">
+                    <span class="result-label">Health & Education Cess (4%):</span>
+                    <span class="result-value">₹<span id="cess">0</span></span>
+                </div>
+            </div>
+
+            <div class="tax-payable">
+                Total Tax Payable: <br/>₹<span id="totalTax">0</span>
+            </div>
+
+            <div class="result-box">
+                <p style="text-align: center; color: #666; font-size: 0.9em;">
+                    <strong>Disclaimer:</strong> This is a simplified calculator for educational purposes only. 
+                    Please consult a CA/tax professional for accurate tax planning and filing.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('taxForm');
+        const resultSection = document.getElementById('resultSection');
+        const errorMsg = document.getElementById('errorMsg');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateTax();
+        });
+
+        function calculateTax() {
+            try {
+                errorMsg.classList.remove('show');
+
+                // Get income values
+                const salary = parseFloat(document.getElementById('salary').value) || 0;
+                const business = parseFloat(document.getElementById('business').value) || 0;
+                const houseProperty = parseFloat(document.getElementById('houseProperty').value) || 0;
+                const capitalGains = parseFloat(document.getElementById('capitalGains').value) || 0;
+                const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+
+                // Get deduction values
+                const section80C = parseFloat(document.getElementById('section80C').value) || 0;
+                const section80CCC = parseFloat(document.getElementById('section80CCC').value) || 0;
+                const section80CCD = parseFloat(document.getElementById('section80CCD').value) || 0;
+                const section80D = parseFloat(document.getElementById('section80D').value) || 0;
+                const section80E = parseFloat(document.getElementById('section80E').value) || 0;
+                const section80G = parseFloat(document.getElementById('section80G').value) || 0;
+                const otherDeductions = parseFloat(document.getElementById('otherDeductions').value) || 0;
+
+                const ageCategory = document.getElementById('ageCategory').value;
+                const residentialStatus = document.getElementById('residentialStatus').value;
+
+                // Calculate Gross Total Income
+                const gti = salary + business + houseProperty + capitalGains + otherIncome;
+
+                // Calculate total deductions
+                const totalDed = section80C + section80CCC + section80CCD + section80D + section80E + section80G + otherDeductions;
+
+                // Validate deductions (80C max limit)
+                if (section80C > 150000) {
+                    showError('Section 80C deduction cannot exceed ₹1,50,000');
+                    return;
+                }
+                if (section80D > 50000) {
+                    showError('Section 80D deduction cannot exceed ₹50,000 (₹25,000 below 60 years)');
+                    return;
+                }
+
+                // Standard Deduction
+                let standardDed = 0;
+                if (salary > 0) {
+                    standardDed = Math.min(salary, 75000);
+                }
+
+                // Taxable Income
+                let taxableIncome = gti - totalDed - standardDed;
+                taxableIncome = Math.max(taxableIncome, 0);
+
+                // Calculate tax based on slab rates (FY 2025-26)
+                let incomeTax = 0;
+                let slab = '';
+
+                if (residentialStatus === 'nri' || residentialStatus === 'fnri') {
+                    // NRI tax rates (flat 20% on foreign income)
+                    incomeTax = taxableIncome * 0.20;
+                    slab = 'NRI Rate (20%)';
+                } else {
+                    // Resident tax slabs FY 2025-26
+                    if (ageCategory === 'normal') {
+                        if (taxableIncome <= 300000) {
+                            incomeTax = 0;
+                            slab = '₹0 - ₹3,00,000: Nil';
+                        } else if (taxableIncome <= 700000) {
+                            incomeTax = (taxableIncome - 300000) * 0.05;
+                            slab = '₹3,00,001 - ₹7,00,000: 5%';
+                        } else if (taxableIncome <= 1000000) {
+                            incomeTax = 20000 + (taxableIncome - 700000) * 0.20;
+                            slab = '₹7,00,001 - ₹10,00,000: 20%';
+                        } else if (taxableIncome <= 1250000) {
+                            incomeTax = 80000 + (taxableIncome - 1000000) * 0.30;
+                            slab = '₹10,00,001 - ₹12,50,000: 30%';
+                        } else {
+                            incomeTax = 155000 + (taxableIncome - 1250000) * 0.30;
+                            slab = 'Above ₹12,50,000: 30%';
+                        }
+                    } else if (ageCategory === 'senior') {
+                        // Senior Citizen (60-80 years)
+                        if (taxableIncome <= 500000) {
+                            incomeTax = 0;
+                            slab = '₹0 - ₹5,00,000: Nil';
+                        } else if (taxableIncome <= 1000000) {
+                            incomeTax = (taxableIncome - 500000) * 0.20;
+                            slab = '₹5,00,001 - ₹10,00,000: 20%';
+                        } else {
+                            incomeTax = 100000 + (taxableIncome - 1000000) * 0.30;
+                            slab = 'Above ₹10,00,000: 30%';
+                        }
+                    } else {
+                        // Super Senior (Above 80 years)
+                        if (taxableIncome <= 500000) {
+                            incomeTax = 0;
+                            slab = '₹0 - ₹5,00,000: Nil';
+                        } else {
+                            incomeTax = (taxableIncome - 500000) * 0.20;
+                            slab = 'Above ₹5,00,000: 20%';
+                        }
+                    }
+                }
+
+                // Calculate Health & Education Cess (4%)
+                const cess = incomeTax * 0.04;
+
+                // Total Tax
+                const totalTax = incomeTax + cess;
+
+                // Display results
+                document.getElementById('gti').textContent = gti.toFixed(2);
+                document.getElementById('totalDeductions').textContent = totalDed.toFixed(2);
+                document.getElementById('taxableIncome').textContent = taxableIncome.toFixed(2);
+                document.getElementById('standardDeduction').textContent = standardDed.toFixed(2);
+                document.getElementById('incomeTax').textContent = incomeTax.toFixed(2);
+                document.getElementById('cess').textContent = cess.toFixed(2);
+                document.getElementById('totalTax').textContent = totalTax.toFixed(2);
+
+                resultSection.classList.add('show');
+
+                // Log for debugging
+                console.log({
+                    gti,
+                    totalDed,
+                    standardDed,
+                    taxableIncome,
+                    incomeTax,
+                    cess,
+                    totalTax,
+                    slab,
+                    ageCategory,
+                    residentialStatus
+                });
+
+            } catch (error) {
+                showError('Error in calculation: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.add('show');
+            resultSection.classList.remove('show');
+        }
+
+        // Reset form
+        form.addEventListener('reset', function() {
+            resultSection.classList.remove('show');
+            errorMsg.classList.remove('show');
+        });
+    </script>
 </body>
 </html>
