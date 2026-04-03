@@ -1,43 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ITR2 Tax Calculator FY 2025-26</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        input { margin: 5px 0; padding: 10px; width: 100%; }
-        button { padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        #result { margin-top: 20px; }
-    </style>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ITR Calculator FY 2025-26</title>
 </head>
 <body>
-    <h1>ITR2 Tax Calculator FY 2025-26</h1>
-    <form id="taxForm">
-        <h2>Income Inputs</h2>
-        <input type="number" id="salary" placeholder="Salary Income" required>
-        <input type="number" id="otherIncome" placeholder="Other Income" required>
-        <h2>Deductions</h2>
-        <input type="number" id="deductions" placeholder="Total Deductions" required>
-        <h2>Tax Rates</h2>
-        <input type="number" id="taxRate" placeholder="Applicable Tax Rate (%)" required>
-        <button type="submit">Calculate Tax</button>
+    <form>
+        <input type="text" name="income"/>
+        <input type="number" name="age"/>
+        <input type="checkbox" name="terms"/>
+        <input type="submit" value="Calculate"/>
     </form>
-    <div id="result"></div>
-    <script>
-        document.getElementById('taxForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const salary = parseFloat(document.getElementById('salary').value);
-            const otherIncome = parseFloat(document.getElementById('otherIncome').value);
-            const deductions = parseFloat(document.getElementById('deductions').value);
-            const taxRate = parseFloat(document.getElementById('taxRate').value);
-
-            const totalIncome = salary + otherIncome;
-            const taxableIncome = totalIncome - deductions;
-            const taxPayable = (taxableIncome * taxRate) / 100;
-
-            document.getElementById('result').innerHTML = `<h2>Tax Payable: ₹${taxPayable.toFixed(2)}</h2>`;
-        });
-    </script>
 </body>
 </html>
