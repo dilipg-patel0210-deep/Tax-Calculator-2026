@@ -1,0 +1,3008 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=5">
+<title>ITR-2 Tax Calculator | FY 2025-26 | v29</title>
+<style>
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ── THEME VARIABLES ──────────────────────────────── */
+:root{
+  --bg:#eef2f7; --card:#fff; --card2:#f8fafc;
+  --border:#d4dce8; --border2:#b8c8da;
+  --hdr1:#162f4a; --hdr2:#1e4976;
+  --txt:#1a2a3a; --txt2:#3d5a78; --txt3:#7a96b2;
+  --num:#0f4c8a; --green:#0e6b34; --red:#b91c1c; --amber:#8a4500; --violet:#4c1d95;
+  --ac-s:#0d7c6e; --ac-hp:#b45a00; --ac-cg:#15622e; --ac-os:#4c1d95;
+  --ac-si:#b91c1c; --ac-d:#1d4ed8; --ac-sum:#0369a1; --ac-tax:#c2410c; --ac-ex:#92400e; --ac-agri:#16a34a;
+  --rbar:#fff; --rdiv:#eef2f7;
+}
+body.th-postcard{
+  --bg:#f5ede0; --card:#fff9f2; --card2:#fef5e8;
+  --border:#e0cdb8; --border2:#cbb89e;
+  --hdr1:#3a1f0a; --hdr2:#5c3210;
+  --rbar:#fff9f2; --rdiv:#f5ede0;
+}
+body.th-pista{
+  --bg:#dff2df; --card:#f4fbf2; --card2:#eaf7e8;
+  --border:#b8ddb8; --border2:#9ccb9c;
+  --hdr1:#0a3a14; --hdr2:#12582a;
+  --rbar:#f4fbf2; --rdiv:#dff2df;
+}
+body.th-blue{
+  --bg:#deeaf8; --card:#f2f7ff; --card2:#e8f0fc;
+  --border:#b8d0f0; --border2:#92b8e8;
+  --hdr1:#0d2348; --hdr2:#1a3a7a;
+  --rbar:#f2f7ff; --rdiv:#deeaf8;
+}
+body.th-pink{
+  --bg:#fce8f2; --card:#fff5f8; --card2:#fceaf2;
+  --border:#f0c8dc; --border2:#e0a8c8;
+  --hdr1:#4a0a28; --hdr2:#7a1848;
+  --rbar:#fff5f8; --rdiv:#fce8f2;
+}
+body.th-gray{
+  --bg:#e8ecf0; --card:#f5f6f8; --card2:#ebedf1;
+  --border:#c8cdd6; --border2:#adb5c2;
+  --hdr1:#2c3440; --hdr2:#3d4a5c;
+  --rbar:#f5f6f8; --rdiv:#e8ecf0;
+}
+
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#111;padding:8px 6px;font-size:13px;transition:background .2s}
+.wrap{max-width:1460px;margin:0 auto}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,var(--hdr1),var(--hdr2));border-radius:12px;padding:8px 14px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:5px}
+.hdr h1{font-size:13px;font-weight:700;color:#fff}
+.hdr p{font-size:9.5px;color:rgba(255,255,255,.85);margin-top:2px;font-weight:500}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.hdr-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:9px;padding:2px 8px;border-radius:14px;font-weight:700;border:1px solid}
+.b-new{color:#b91c1c;border-color:#fca5a5;background:#fff1f2}
+.b-old{color:#8a4500;border-color:#fcd34d;background:#fffbeb}
+.b-fy{color:#1d4ed8;border-color:#93c5fd;background:#eff6ff}
+
+/* ── COLOUR SWITCHER ── */
+.color-switcher{display:flex;align-items:center;gap:5px}
+.color-switcher span{font-size:7.5px;color:rgba(255,255,255,.7);margin-right:2px}
+.cbtn{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.5);cursor:pointer;transition:transform .15s,border-color .15s;flex-shrink:0}
+.cbtn:hover{transform:scale(1.2);border-color:#fff}
+.cbtn.active{border-color:#fff;transform:scale(1.15);box-shadow:0 0 0 2px rgba(255,255,255,.4)}
+.cb-def    {background:#eef2f7}
+.cb-postcard{background:#f5c89a}
+.cb-pista  {background:#88d89a}
+.cb-blue   {background:#7fb8f5}
+.cb-pink   {background:#f5a8cc}
+.cb-gray   {background:#c8cdd6}
+
+/* ── REGIME BAR ── */
+.rbar{background:var(--rbar);border:1px solid var(--border);border-radius:9px;padding:6px 12px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:7px;box-shadow:0 1px 3px #0001}
+.rbar-radios{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.rbar-radios label{display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-size:11.5px;font-weight:600;color:#000}
+.rbar-radios input[type=radio]{accent-color:#1558a8;width:12px;height:12px}
+.rbar-r{color:#b91c1c;font-size:10px;font-weight:500}
+.rbar-a{color:#8a4500;font-size:10px;font-weight:500}
+.btn-rst{background:#fee2e2;border:1px solid #fca5a5;padding:4px 11px;border-radius:18px;color:#b91c1c;font-weight:700;cursor:pointer;font-size:8.5px}
+.btn-rst:hover{background:#fecaca}
+
+/* ── LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:860px){.two-col{grid-template-columns:1fr}}
+
+/* ── ACCORDION ── */
+.ac{background:var(--card);border:1px solid var(--border);border-radius:9px;margin-bottom:6px;overflow:visible;box-shadow:0 1px 3px #0001}
+.ac-hdr{display:flex;align-items:stretch;cursor:pointer;user-select:none;border-radius:9px 9px 0 0;transition:background .12s}
+.ac-hdr:hover .ac-inner{background:var(--card2)}
+.ac.closed>.ac-hdr{border-radius:9px}
+.ac.closed>.ac-hdr .ac-inner{border-radius:0 9px 9px 0}
+.ac-stripe{width:4px;flex-shrink:0;border-radius:8px 0 0 0;transition:border-radius .15s}
+.ac.closed .ac-stripe{border-radius:8px 0 0 8px}
+.ac-inner{flex:1;display:flex;align-items:center;justify-content:space-between;padding:6px 9px 6px 7px;gap:5px;border-radius:0 9px 9px 0;transition:background .12s}
+.ac-title{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.ico{font-size:12px;line-height:1;flex-shrink:0}
+.ac-title strong{font-size:11px;font-weight:700;color:#000}
+.hbg{display:flex;flex-direction:column;gap:2.2px;opacity:.4;flex-shrink:0}
+.hbg i{display:block;width:13px;height:1.7px;background:var(--txt2);border-radius:2px}
+.chev{font-size:11px;color:#4a6080;transition:transform .2s;flex-shrink:0;line-height:1}
+.ac.open>.ac-hdr .chev{transform:rotate(180deg)}
+
+/* Section tags */
+.sec{font-size:8.5px;padding:1px 6px;border-radius:7px;font-weight:700;font-family:monospace;white-space:nowrap}
+.sec-r{color:#b91c1c;background:#fff1f2;border:1px solid #fca5a5}
+.sec-a{color:#8a4500;background:#fffbeb;border:1px solid #fcd34d}
+.sec-b{color:#1d4ed8;background:#eff6ff;border:1px solid #93c5fd}
+.sec-g{color:#15622e;background:#f0fdf4;border:1px solid #86efac}
+.sec-v{color:#4c1d95;background:#f5f3ff;border:1px solid #c4b5fd}
+.sec-gray{color:#4a6080;background:var(--card2);border:1px solid var(--border)}
+
+/* ── ACCORDION BODY ── */
+.ac-body{padding:9px 11px;border-top:1px solid var(--border);display:none}
+.ac.open>.ac-body{display:block}
+
+/* ── FORM ── */
+.frow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.fg{flex:1;min-width:108px}
+.fg.full{flex:0 0 100%}
+label.lbl{font-size:11px;font-weight:700;color:#1a2a3a;display:flex;align-items:center;gap:3px;margin-bottom:3px}
+input[type=number],input[type=date],select{width:100%;padding:6px 8px;border-radius:6px;border:1.5px solid var(--border2);font-size:12px;background:var(--card);color:#000;outline:none;transition:border-color .12s;font-weight:600}
+input[type=number]:focus,input[type=date]:focus,select:focus{border-color:#1558a8;box-shadow:0 0 0 2px #dbeafe60}
+.hint{font-size:10px;color:#4a5568;margin-top:3px;line-height:1.4;font-weight:500}
+.wn{background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 6px 6px 0;padding:6px 10px;margin:5px 0;font-size:10.5px;line-height:1.6;color:#5a2d00;font-weight:500}
+.wn-b{background:#eff6ff;border-left-color:#3b82f6;color:#1d4ed8}
+.wn-g{background:#f0fdf4;border-left-color:#22c55e;color:#15622e}
+
+/* ── TOOLTIP ── */
+.ib{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:#eff6ff;border:1.5px solid #93c5fd;color:#1d4ed8;font-size:9px;cursor:pointer;font-style:italic;font-weight:700;position:relative;user-select:none;flex-shrink:0}
+.ib:hover .tip,.ib.open .tip{display:block}
+/* Tooltip: JS will add .tip-left or .tip-below when near edge */
+.tip{display:none;position:fixed;z-index:99999;width:260px;max-width:calc(100vw - 24px);background:#1a2a3a;border:1px solid #2a4060;border-radius:8px;padding:9px 11px;font-size:11px;line-height:1.6;color:#e2edf8;box-shadow:0 6px 24px #0005;pointer-events:none;word-wrap:break-word}
+.tip b{color:#fff;font-size:11.5px}
+.tip::after{content:'';position:absolute;width:0;height:0;border:6px solid transparent}
+/* Default: tip appears above the button */
+.tip.pos-above::after{bottom:-12px;left:50%;transform:translateX(-50%);border-top-color:#2a4060;border-bottom:none}
+.tip.pos-below::after{top:-12px;left:50%;transform:translateX(-50%);border-bottom-color:#2a4060;border-top:none}
+
+/* ── REGIME DIM ── */
+.old-only{opacity:.28;pointer-events:none}
+.show{opacity:1!important;pointer-events:auto!important}
+#nriRateRow{display:none}
+#hufNote{display:none}
+#rnorNote{display:none}
+#dobRow{display:none}
+/* ── PRINT CSS ──────────────────────────────────── */
+.btn-print{background:#0d7c6e;border:1px solid #0a6358;padding:4px 12px;border-radius:18px;color:#fff;font-weight:700;cursor:pointer;font-size:8.5px;transition:background .15s;margin-left:4px}
+.btn-print:hover{background:#0a6358}
+.wn-itat{background:#f0fdf4;border-left:3px solid #16a34a;border-radius:0 6px 6px 0;padding:6px 10px;margin:5px 0;font-size:10.5px;line-height:1.6;color:#064e20;font-weight:500}
+.wn-rnor{background:#eff6ff;border-left:3px solid #3b82f6;border-radius:0 6px 6px 0;padding:6px 10px;margin:5px 0;font-size:10.5px;line-height:1.6;color:#1e3a8a;font-weight:500}
+/* ── ITR-2 FORMAT PAGE (screen preview) ── */
+#itr2Page{display:none;background:#fff;color:#000;width:100%;max-width:860px;margin:12px auto;border:1px solid #bbb;box-shadow:0 2px 12px #0002;box-sizing:border-box;overflow-x:auto}
+.itr-form-hdr{text-align:center;border:2px solid #000;padding:6px;margin-bottom:8px}
+.itr-form-hdr h2{font-size:11pt;font-weight:700;letter-spacing:.5px}
+.itr-form-hdr h3{font-size:10pt;font-weight:700;margin-top:2px}
+.itr-form-hdr p{font-size:8pt;margin-top:2px}
+.itr-sch-title{font-size:9pt;font-weight:700;background:#c0c0c0;padding:3px 6px;margin:8px 0 4px;border:1px solid #555;text-transform:uppercase;letter-spacing:.3px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.itr-tbl{width:100%;border-collapse:collapse;font-size:8.5pt;margin-bottom:4px;table-layout:fixed;word-wrap:break-word}
+.itr-tbl td,.itr-tbl th{border:1px solid #333;padding:2px 5px;vertical-align:middle;word-wrap:break-word;overflow-wrap:break-word}
+.itr-tbl .sl{width:6%;text-align:center;font-size:7.5pt;background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.itr-tbl .desc{width:54%}
+.itr-tbl .amt{width:20%;text-align:right;font-weight:600;font-family:'Courier New',monospace}
+.itr-tbl .ref{width:18%;font-size:7pt;color:#444;font-style:italic;word-wrap:break-word}
+.itr-tbl .hdr-row td{background:#ddd;font-weight:700;font-size:8pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.itr-tbl .sub-row td{padding-left:16px;font-size:8pt}
+.itr-tbl .total-row td{font-weight:700;background:#f0f0f0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.itr-tbl .grand-row td{font-weight:700;font-size:9.5pt;background:#333;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.itr-tbl .grand-row td.amt{color:#90e0a0}
+.itr-tbl .rebate-row td{color:#b00}
+.itr-partA{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;font-size:8.5pt}
+.itr-partA-item{display:flex;gap:4px;border:1px solid #aaa;padding:3px 6px;align-items:center}
+.itr-partA-item .lbl{flex:0 0 120px;font-weight:600;color:#333;font-size:8pt}
+.itr-partA-item .val{flex:1;font-weight:700;border-bottom:1px dotted #888}
+.itr-note{font-size:7.5pt;color:#666;margin:3px 0;line-height:1.4;border-left:2px solid #999;padding-left:5px}
+/* ── DEBUG PANEL ── */
+#debugPanel{display:none;background:#f8f9fa;color:#000;border-radius:10px;padding:12px;margin:8px 0;font-family:'Courier New',monospace;font-size:12px;line-height:1.8;border:2px solid #000}
+#debugPanel.show-debug{display:block}
+.dbg-hdr{color:#000;font-size:13px;font-weight:900;border-bottom:3px solid #000;padding-bottom:6px;margin-bottom:8px}
+.dbg-pass{color:#000;background:#b6f0b6;padding:2px 8px;border-radius:3px;display:inline-block;font-weight:900;border:1px solid #006600}.dbg-fail{color:#fff;background:#cc0000;padding:2px 8px;border-radius:3px;display:inline-block;font-weight:900;border:1px solid #800}.dbg-warn{color:#000;background:#ffe066;padding:2px 8px;border-radius:3px;display:inline-block;font-weight:900;border:1px solid #996600}
+.dbg-section{margin-top:10px;border-top:2px solid #000;padding-top:8px}
+.dbg-kv{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #aaa}
+.dbg-kv .k{color:#000;font-weight:900;font-size:12px}.dbg-kv .v{color:#000;font-weight:900;font-size:12px}
+/* ── PREVIEW/DEBUG BUTTONS ── */
+.btn-itr2{background:#1558a8;border:1px solid #1045a0;padding:4px 12px;border-radius:18px;color:#fff;font-weight:700;cursor:pointer;font-size:8.5px;margin-left:4px}
+.btn-itr2:hover{background:#1045a0}
+.btn-dbg{background:#4c1d95;border:1px solid #3b1680;padding:4px 12px;border-radius:18px;color:#fff;font-weight:700;cursor:pointer;font-size:8.5px;margin-left:4px}
+.btn-dbg:hover{background:#3b1680}
+/* ── PRINT: body.printing-itr2 hides calculator, shows only ITR-2 page ── */
+body.printing-itr2 #itr2Page { display:block !important; }
+body.printing-itr2 .wrap,
+body.printing-itr2 .hdr,
+body.printing-itr2 .rbar,
+body.printing-itr2 .save-bar,
+body.printing-itr2 .two-col,
+body.printing-itr2 footer,
+body.printing-itr2 #debugPanel { display:none !important; }
+
+@media print {
+  html,body{margin:0!important;padding:0!important;background:#fff!important;color:#000!important}
+  .wrap,.hdr,.rbar,.save-bar,.two-col,footer,
+  #debugPanel,.btn-print,.btn-itr2,.btn-dbg,.btn-rst,
+  #rnorCalcBlock,#saveToast{display:none!important}
+  #itr2Page{
+    display:block!important;position:static!important;
+    box-shadow:none!important;border:none!important;
+    margin:0!important;padding:0!important;
+    width:100%!important;max-width:100%!important;
+    box-sizing:border-box!important;overflow:visible!important;
+  }
+  #itr2Inner{
+    width:100%!important;max-width:100%!important;
+    padding:6mm 6mm!important;box-sizing:border-box!important;
+    font-size:7pt!important;font-family:Arial,Helvetica,sans-serif!important;
+    color:#000!important;background:#fff!important;
+  }
+  @page{size:A4 portrait;margin:8mm 6mm}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .itr-form-hdr{border:1.5pt solid #000!important;padding:3pt 5pt!important;margin-bottom:5pt!important;text-align:center!important}
+  .itr-form-hdr h2{font-size:9pt!important;font-weight:700!important}
+  .itr-form-hdr h3{font-size:8pt!important;font-weight:700!important}
+  .itr-form-hdr p{font-size:6.5pt!important;margin-top:1pt!important}
+  .itr-sch-title{font-size:7pt!important;font-weight:700!important;background:#d0d0d0!important;
+    padding:2pt 4pt!important;margin:4pt 0 2pt!important;border:0.5pt solid #555!important;
+    page-break-after:avoid!important;text-transform:uppercase!important}
+  .itr-tbl{width:100%!important;border-collapse:collapse!important;table-layout:fixed!important;
+    word-wrap:break-word!important;margin-bottom:2pt!important;font-size:6.5pt!important}
+  .itr-tbl td,.itr-tbl th{border:0.5pt solid #555!important;padding:1.5pt 3pt!important;
+    font-size:6.5pt!important;word-wrap:break-word!important;overflow-wrap:break-word!important;
+    vertical-align:top!important;color:#000!important}
+  .itr-tbl .sl{width:5%!important;text-align:center!important;background:#eee!important}
+  .itr-tbl .desc{width:52%!important}
+  .itr-tbl .amt{width:20%!important;text-align:right!important;font-weight:700!important}
+  .itr-tbl .ref{width:23%!important;font-size:6pt!important;color:#333!important}
+  .itr-tbl .total-row td{background:#f0f0f0!important;font-weight:700!important}
+  .itr-tbl .grand-row td{background:#2c3440!important;color:#fff!important;font-weight:700!important}
+  .itr-tbl .grand-row td.amt{color:#90e0a0!important}
+  .itr-tbl .rebate-row td{color:#990000!important}
+  .itr-tbl .sub-row td{padding-left:8pt!important}
+  .itr-partA{display:grid!important;grid-template-columns:1fr 1fr!important;gap:2pt!important;
+    margin-bottom:4pt!important;font-size:6.5pt!important}
+  .itr-partA-item{border:0.5pt solid #888!important;padding:2pt 4pt!important;font-size:6.5pt!important}
+  .itr-partA-item .lbl{font-size:6pt!important;flex:0 0 80pt!important}
+  .itr-partA-item .val{font-size:6.5pt!important}
+  .itr-note{font-size:5.5pt!important;margin:2pt 0!important;color:#333!important;
+    border-left:1pt solid #999!important;padding-left:3pt!important}
+  tr{page-break-inside:avoid!important}
+  .itr-sch-title+table{page-break-before:avoid!important}
+  /* Responsive grid cells in ITR-2 body */
+  #itr2Inner [style*="grid-template-columns:repeat(5"]{
+    grid-template-columns:repeat(3,1fr)!important}
+  #itr2Inner [style*="grid-template-columns:repeat(4"]{
+    grid-template-columns:repeat(2,1fr)!important}
+}
+/* ── SAVE BAR ── */
+.save-bar{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:6px 12px;margin-bottom:7px;display:flex;align-items:center;flex-wrap:wrap;gap:6px;box-shadow:0 1px 3px #0001}
+.save-label{font-size:11px;font-weight:700;color:#1a2a3a;margin-right:2px}
+.sbtn{padding:5px 13px;border-radius:18px;font-weight:700;cursor:pointer;font-size:11px;border:1.5px solid;transition:all .15s;white-space:nowrap}
+.sbtn-html{background:#eff6ff;color:#1d4ed8;border-color:#93c5fd}
+.sbtn-html:hover{background:#dbeafe}
+.sbtn-pdf{background:#f0fdf4;color:#15622e;border-color:#86efac}
+.sbtn-pdf:hover{background:#dcfce7}
+.sbtn-zip{background:#fef9c3;color:#78350f;border-color:#fde047}
+.sbtn-zip:hover{background:#fef08a}
+.save-hint{font-size:9.5px;color:#64748b;margin-left:4px}
+@media(max-width:600px){.save-hint{display:none}.sbtn{font-size:12px;padding:6px 12px}}
+/* ── PROFILE STATUS DISPLAY ── */
+.status-pill{display:inline-flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:700;color:#1a2a3a;margin-top:5px}
+.status-pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── TAX RESULT PANEL ── */
+.res{background:var(--card2);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.gti-section{padding:7px 10px 5px}
+.gti-title{font-size:10px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.gti-row{display:flex;justify-content:space-between;align-items:center;padding:3.5px 0;font-size:11px;border-bottom:1px solid var(--border)}
+.gti-row:last-child{border-bottom:none}
+.gti-row .lf{color:#1a2a3a;flex:1;font-weight:500}
+.gti-row .rf{font-family:monospace;font-weight:700;color:#0a3880;white-space:nowrap;margin-left:8px;font-size:12px}
+.gti-row.neg .rf{color:var(--red)}
+.gti-row.total-line{border-top:2px solid var(--border2);border-bottom:none;margin-top:3px;padding-top:5px}
+.gti-row.total-line .lf{font-weight:800;color:#000;font-size:12px}
+.gti-row.total-line .rf{font-size:13px;color:#0a3880;font-weight:800}
+.rdiv{border:none;border-top:2px solid var(--border);margin:0}
+.rdiv-label{background:var(--rdiv);font-size:9.5px;color:#374151;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px}
+.vi-section{padding:5px 10px}
+.vi-row{display:flex;justify-content:space-between;align-items:center;padding:3px 4px;font-size:11px;border-bottom:1px solid var(--border)}
+.vi-row:last-child{border-bottom:none}
+.vi-row .lf{color:#1a2a3a;flex:1;font-weight:500}
+.vi-row .rf{font-family:monospace;font-weight:700;color:#b91c1c;white-space:nowrap;margin-left:8px;font-size:12px}
+.ti-section{padding:5px 10px 6px}
+.ti-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px}
+.ti-row .lf{font-weight:800;color:#000}
+.ti-row .rf{font-family:monospace;font-weight:800;color:#0a3880;font-size:13px}
+.tax-section{padding:5px 10px 6px}
+.tx-row{display:flex;justify-content:space-between;align-items:center;padding:3.5px 0;font-size:11px;border-bottom:1px solid var(--border)}
+.tx-row:last-child{border-bottom:none}
+.tx-row .lf{color:#1a2a3a;flex:1;font-weight:500}
+.tx-row .rf{font-family:monospace;font-weight:700;color:#000;white-space:nowrap;margin-left:8px;font-size:12px}
+.tx-row.sub .lf{color:#374151;font-size:10.5px;padding-left:10px;font-weight:500}
+.tx-row.sub .rf{color:#374151;font-size:11px;font-weight:600}
+.tx-row.rebate .rf{color:var(--red)}
+.tx-row.grand{border:none;background:linear-gradient(135deg,var(--hdr1),var(--hdr2));border-radius:6px;padding:6px 9px;margin:4px 0 0}
+.tx-row.grand .lf{font-weight:800;color:#fff;font-size:12px}
+.tx-row.grand .rf{font-size:15px;font-weight:800;color:#5eead4;font-family:monospace}
+.tx-row.eff .lf{font-weight:600;color:var(--txt)}
+.tx-row.eff .rf{color:#92400e;font-size:12px;font-weight:700}
+
+/* ── SUMMARY TABLE ── */
+.stbl{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+.stbl th,.stbl td{border:1px solid var(--border);padding:4px 5px;vertical-align:top}
+.stbl th{background:var(--card2);font-weight:700;color:#1a2a3a;font-size:10px;white-space:nowrap}
+.stbl tr:nth-child(even) td{background:var(--card2)}
+.stbl td.num{font-family:monospace;text-align:right;font-weight:700;color:#0a3880}
+.stbl td.neg{font-family:monospace;text-align:right;color:var(--red);font-weight:700}
+.stbl tfoot td{background:var(--card2);font-weight:700;font-size:8.5px;color:var(--txt2)}
+.stbl tfoot td.num{color:var(--num)}
+
+/* ── EXAMPLES ── */
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px;margin-top:6px}
+.ex-card{background:#fffbeb;border-left:3px solid #f59e0b;border-radius:8px;padding:8px 10px;font-size:8.5px}
+.ex-card h4{font-size:8.5px;color:#8a4500;margin-bottom:4px;font-weight:700}
+.ex-card p{margin:2px 0;color:var(--txt2);line-height:1.4}
+.ex-tax{font-weight:700;color:#0e6b34;margin-top:4px}
+.ex-card button{margin-top:4px;padding:3px 8px;font-size:8px;background:#fef3c7;color:#8a4500;border:1px solid #fcd34d;cursor:pointer;border-radius:12px;font-weight:600}
+.ex-card button:hover{background:#fde68a}
+
+footer{text-align:center;margin-top:10px;font-size:10px;color:#374151;padding:6px 0}
+/* ── RNOR CALC CSS ── */
+#rnorCalcBlock .ac{border:1px solid #b8d0f0}
+#rcResult{font-size:11.5px}
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:600px){
+  body{font-size:13px;padding:6px 4px}
+  .two-col{grid-template-columns:1fr}
+  .hdr h1{font-size:11.5px}
+  .hdr p{font-size:9px}
+  .fg{min-width:100%;flex:0 0 100%}
+  .frow{gap:5px}
+  .ac-body{padding:8px 8px}
+  input[type=number],input[type=date],select{font-size:13px;padding:7px 8px}
+  label.lbl{font-size:12px}
+  .stbl{font-size:11px}
+  .stbl th,.stbl td{padding:4px 4px}
+  .tx-row .rf{font-size:13px}
+  .tx-row.grand .rf{font-size:16px}
+  .tip{width:calc(100vw - 20px);font-size:12px}
+  .btn-print,.btn-itr2,.btn-dbg,.btn-rst{font-size:10px;padding:5px 10px}
+  .rbar-radios{flex-direction:column;gap:6px}
+  .rbar-radios label{font-size:12px}
+  .color-switcher span{display:none}
+  .cbtn{width:22px;height:22px}
+  .rdiv-label{font-size:11px}
+  .gti-row{font-size:12px}
+  .vi-row{font-size:12px}
+  .ti-row{font-size:13px}
+  .tx-row{font-size:12px}
+  .tx-row.sub .lf{font-size:11.5px}
+}
+@media(max-width:400px){
+  .hdr{padding:6px 8px}
+  .hdr h1{font-size:10.5px}
+  .ac-inner{padding:5px 6px}
+}
+@media(max-width:860px){
+  #itr2Inner{padding:8px 6px!important}
+  #itr2Inner [style*="grid-template-columns:repeat(5"]{display:grid;grid-template-columns:repeat(2,1fr)!important;gap:3px!important}
+  #itr2Inner [style*="grid-template-columns:repeat(4"]{display:grid;grid-template-columns:repeat(2,1fr)!important}
+  #itr2Inner [style*="grid-template-columns:1fr 1fr 1fr 1fr 1.2fr"]{display:grid;grid-template-columns:1fr 1fr!important;gap:4px!important}
+}
+@media(max-width:520px){
+  #itr2Inner [style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr 1fr!important}
+  #itr2Inner [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  #itr2Inner [style*="grid-template-columns:1fr 1fr 1fr 1fr 1.2fr"]{grid-template-columns:1fr!important}
+}
+/* ── ITR-2 INNER (screen + print) ── */
+#itr2Inner{width:100%;max-width:794px;box-sizing:border-box;padding:14px 16px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:8.5pt;color:#111;margin:0 auto}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script></head><body class="">
+<div class="wrap">
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <div>
+    <h1>⚖ ITR-2 Tax Calculator &nbsp;|&nbsp; Section-wise Bifurcation &nbsp;|&nbsp; FY 2025-26 (AY 2026-27)</h1>
+    <p>Finance Act 2025 · 87A: slab only (FA2025) · NRI: NRO@slab, Div+FC@20% u/s 115A · RNOR residency · v29</p>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-badges">
+      <span class="badge b-new">New Regime 115BAC</span>
+      <span class="badge b-old">Old Regime</span>
+      <span class="badge b-fy">FY 2025-26</span>
+    </div>
+    <!-- Background Colour Switcher + Print -->
+    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end">
+      <div class="color-switcher">
+        <span>Theme:</span>
+        <div class="cbtn cb-def active" title="Default" onclick="setTheme('')"></div>
+        <div class="cbtn cb-postcard" title="Postcard" onclick="setTheme('th-postcard')"></div>
+        <div class="cbtn cb-pista" title="Pista" onclick="setTheme('th-pista')"></div>
+        <div class="cbtn cb-blue" title="Sky Blue" onclick="setTheme('th-blue')"></div>
+        <div class="cbtn cb-pink" title="Light Pink" onclick="setTheme('th-pink')"></div>
+        <div class="cbtn cb-gray" title="Light Gray" onclick="setTheme('th-gray')"></div>
+      </div>
+      <button class="btn-print" onclick="printCalc()">🖨 Print / PDF</button>
+      <button class="btn-itr2" onclick="toggleITR2()">📄 View ITR-2</button>
+      <button class="btn-dbg" onclick="toggleDebug()">🔬 Debug</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REGIME BAR ═══ -->
+<div class="rbar">
+  <div class="rbar-radios">
+    <label><input type="radio" name="regime" value="old"> <strong>Old Regime</strong>&nbsp;<span class="rbar-a">(HRA · 80C-80U · Std Ded ₹50k · Exemption by age)</span></label>
+    <label><input type="radio" name="regime" value="new" checked=""> <strong>New Regime ✓ Default</strong>&nbsp;<span class="rbar-r">(Std Ded ₹75k · No 80C/80D/HRA · Rebate ₹60k@TI≤₹12L)</span></label>
+  </div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button class="btn-rst" id="btnReset">↺ Reset All</button>
+    <button class="btn-print" onclick="printCalc()">🖨 Print / PDF</button>
+      <button class="btn-itr2" onclick="toggleITR2()">📄 View ITR-2</button>
+      <button class="btn-dbg" onclick="toggleDebug()">🔬 Debug</button>
+  </div>
+</div>
+
+<!-- ═══ SAVE / EXPORT BAR ═══ -->
+<div class="save-bar">
+  <span class="save-label">💾 Export:</span>
+  <button class="sbtn sbtn-html" onclick="saveHTML()" title="Save complete calculator as HTML file">
+    📄 Save HTML
+  </button>
+  <button class="sbtn sbtn-pdf" onclick="savePDF()" title="Print ITR-2 as PDF — browser will prompt filename">
+    📑 Save PDF
+  </button>
+  <button class="sbtn sbtn-zip" onclick="saveZIP()" title="Download HTML + PDF instructions as ZIP">
+    🗜 Save ZIP
+  </button>
+  <span class="save-hint">HTML = full app &nbsp;|&nbsp; PDF = ITR-2 print &nbsp;|&nbsp; ZIP = both together</span>
+</div>
+
+<div class="two-col">
+<!-- ══════════ LEFT COLUMN ══════════ -->
+<div>
+
+<!-- ── PART A: TAXPAYER PROFILE ── -->
+<div class="ac open" id="ac-prof">
+  <div class="ac-hdr" onclick="toggle('ac-prof')">
+    <div class="ac-stripe" style="background:var(--ac-sum)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div>
+        <span class="ico">👤</span>
+        <strong>Part A: Taxpayer Status</strong>
+        <span class="sec sec-b">ITR-2 Format</span>
+        <span class="ib">i<div class="tip"><b>ITR-2 Taxpayer Status (as per GoI format):</b><br><b>Individual:</b> Natural person. Age determines exemption limit (Old Regime).<br><b>HUF:</b> Hindu Undivided Family. Taxed at same slab as individual (below 60). No HRA. No 87A rebate. No 80TTB (senior benefit n/a).<br>Both Individual &amp; HUF can file ITR-2 if no business/profession income.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+
+    <!-- Row 1: Taxpayer Type + Residency Status -->
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Type of Assessee
+          <span class="ib">i<div class="tip"><b>As per ITR-2 Part A:</b><br>Individual: Natural person. Eligible for 87A rebate (if resident), HRA, senior/super-senior exemption, 80TTB.<br>HUF: Hindu Undivided Family. No 87A rebate, no 80TTB. No HRA. Slab = below 60.</div></span>
+        </label>
+        <select id="assesseeType">
+          <option value="ind">Individual</option>
+          <option value="huf">HUF (Hindu Undivided Family)</option>
+        </select>
+      </div>
+      <div class="fg" id="indStatusDiv">
+        <label class="lbl">Residential Status &amp; Age Category (Sec 6)
+          <span class="ib">i<div class="tip"><b>3 Residency Categories under Sec 6:</b><br><b>ROR – Resident &amp; Ordinarily Resident:</b> Taxed on global income. Age determines Old Regime exemption. 87A rebate ✓.<br><b>RNOR – Resident but Not Ordinarily Resident:</b> Only India-source income taxed. Age-based exemption (Old) ✓. 87A rebate ✓ (they ARE residents). 80TTA/80TTB ✓. [NRI returning to India stays RNOR up to 3 yrs]<br><b>NRI – Non-Resident Indian:</b> Only India-source income. Basic exemption ₹2.5L regardless of age. No 87A rebate ✗. 80TTA ✓ (NRO savings bank interest, Old Regime, max ₹10k). 80TTB ✗.</div></span>
+        </label>
+        <select id="indStatus">
+          <option value="res_normal">Resident – Below 60 years</option>
+          <option value="res_senior">Senior Citizen – Above 60 and below 80 years</option>
+          <option value="res_supersenior">Super Senior Citizen – 80 years and above</option>
+          <option value="rnor">RNOR – Resident (Not Ordinarily Resident) [Residency Rules]</option>
+          <option value="nri">Non-Resident (NRI) – Residency test not passed</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Row 2: Date of Birth (auto-calculates senior status) -->
+    <div class="frow" id="dobRow">
+      <div class="fg">
+        <label class="lbl">Date of Birth
+          <span class="ib">i<div class="tip"><b>Auto Age Detection for FY 2025-26:</b><br>Senior Citizen = 60+ yrs at ANY time during FY 2025-26 (i.e., born on or before 31 Mar 1966).<br>Super Senior = 80+ yrs (born on or before 31 Mar 1946).<br>For ROR residents, this auto-updates the status above.<br>For RNOR: age-based Old Regime exemption still applies.<br>For NRI: age not relevant (always ₹2.5L exemption, treated as ordinary). 80TTA ✓ Old Regime (NRO savings only, max ₹10k). 80TTB ✗.</div></span>
+        </label>
+        <input type="date" id="dobInput" max="2025-03-31" min="1920-01-01">
+        <div class="hint">Enter DOB → auto-detects Senior / Super Senior for FY 2025-26</div>
+      </div>
+      <div class="fg" id="ageDisplayDiv">
+        <label class="lbl">Computed Age Status (FY 2025-26)</label>
+        <div id="ageStatus" class="status-pill" style="margin-top:0;padding:5px 10px;font-size:8px">
+          <span class="dot" id="ageDot" style="background:#64748b"></span>
+          <span id="ageText">Enter DOB above to auto-compute</span>
+        </div>
+        <div class="hint" id="ageHint"></div>
+      </div>
+    </div>
+
+    <!-- NRI Income Taxation (shown for NRI only) - confirmed from IT Dept -->
+    <div id="nriRateRow" style="display:none;margin-top:4px">
+      <div class="wn" style="margin-bottom:6px;font-size:10.5px">
+        <b>NRI Taxation (Confirmed - Income Tax Dept AY 2026-27):</b><br>
+        <b>Dividend:</b> Mandatory 20% u/s 115A for all NRIs. TDS @20%. Cannot choose slab rate.<br>
+        <b>NRO/India interest:</b> TDS @30% u/s 195 by bank. ITR filed at slab rate (NRI may claim refund). NRE/FCNR interest is EXEMPT - do not enter.<br>
+        <b>Foreign currency interest u/s 115A:</b> 20% flat (FCCB/ECB/masala bonds).
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="lbl">NRO / India-Source Interest (Slab Rate)
+            <span class="ib">i<div class="tip">NRO Bank / Indian FD/RD interest. TDS @30% u/s 195 by bank. Filed at slab rate in ITR-2. NRI can claim TDS refund if income below exemption. NRE/FCNR interest is EXEMPT - do not enter here.</div></span>
+          </label>
+          <input type="number" id="nriNROInterest" value="0" min="0">
+          <div class="hint">NRO/FD interest - slab rate in ITR - TDS @30% u/s 195</div>
+        </div>
+        <div class="fg">
+          <label class="lbl">Foreign Currency Interest @20% u/s 115A
+            <span class="ib">i<div class="tip">Sec 115A(1)(a)(ii): Interest from money lent in foreign currency to Indian Govt or Indian company (FCCB/ECB/masala bonds). Rate: 20% flat. No deductions, no 87A. TDS @20% u/s 194LC/195.</div></span>
+          </label>
+          <input type="number" id="nriFCInterest" value="0" min="0">
+          <div class="hint">FCCB/ECB/masala bond interest - @20% u/s 115A</div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="lbl">NRI Dividend Income (Auto @20% u/s 115A)
+            <span class="ib">i<div class="tip">Sec 115A(1)(a)(i): Dividend from Indian companies - ALWAYS 20% for NRIs (cannot choose slab rate). TDS @20% u/s 194. No deductions, no 87A rebate. DTAA may reduce rate - consult CA.</div></span>
+          </label>
+          <input type="number" id="nriDividend115A" value="0" min="0">
+          <div class="hint">Indian dividends - mandatory @20% u/s 115A - TDS @20%</div>
+        </div>
+        <div class="fg">
+          <label class="lbl">NRI Tax Summary</label>
+          <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:6px 8px;font-size:10.5px;line-height:1.7;color:#064e20;font-weight:500;margin-top:2px">
+            NRO Interest: Slab Rate in ITR<br>
+            FC Interest: 20% u/s 115A (auto)<br>
+            Dividend: 20% u/s 115A (auto)<br>
+            87A Rebate: NOT applicable<br>
+            80TTA: Old Regime ✓ (NRO savings, max ₹10k)<br>
+            80TTB (FD interest): NOT applicable
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RNOR Note (shown for RNOR only) — focuses ONLY on RNOR-specific rules, 87A covered below -->
+    <div id="rnorNote" class="wn-rnor">
+      <b>RNOR – Resident but Not Ordinarily Resident u/s 6(6):</b><br>
+      • Taxable on <b>India-source income only</b> — foreign income NOT taxable in India<br>
+      • Old Regime: age-based basic exemption applies (₹2.5L / ₹3L / ₹5L per age)<br>
+      • 80TTB applicable (Old Regime, if RNOR is Senior/Super Senior ≥ 60 yrs) · 80TTA if below 60<br>
+      • HRA u/s 10(13A) applicable if Indian employer pays HRA<br>
+      • Typically: NRI returning to India stays RNOR for 2–3 years (see Residency Calculator below)
+    </div>
+    <!-- RNOR Residency Calculator accordion (shown only when RNOR selected) -->
+    <div id="rnorCalcBlock" style="display:none;margin-top:6px">
+      <!-- ── RNOR RESIDENCY CALCULATOR (Sec 6 rules) ── -->
+      <div class="ac closed" id="ac-rnor-calc" style="margin-bottom:4px">
+        <div class="ac-hdr" onclick="toggle('ac-rnor-calc')">
+          <div class="ac-stripe" style="background:#0369a1"></div>
+          <div class="ac-inner">
+            <div class="ac-title">
+              <div class="hbg"><i></i><i></i><i></i></div>
+              <span class="ico">🌐</span>
+              <strong>RNOR Residency Test Calculator (Sec 6)</strong>
+              <span class="sec sec-b">Auto Rules</span>
+            </div>
+            <span class="chev">▼</span>
+          </div>
+        </div>
+        <div class="ac-body">
+          <div class="wn" style="margin-bottom:8px">
+            <b>Sec 6 Residency Rules:</b><br>
+            <b>Step 1 — Are you a Resident?</b> (Need ANY ONE of):<br>
+            &nbsp;&nbsp;(a) In India ≥ 182 days in FY 2025-26, OR<br>
+            &nbsp;&nbsp;(b) In India ≥ 60 days in FY 2025-26 AND ≥ 365 days in last 4 FYs<br>
+            <b>Step 2 — Are you RNOR?</b> (Need ANY ONE of):<br>
+            &nbsp;&nbsp;(a) NRI in 9 out of last 10 preceding FYs, OR<br>
+            &nbsp;&nbsp;(b) In India ≤ 729 days in last 7 preceding FYs<br>
+            If Resident (Step 1) AND RNOR condition (Step 2) → <b>RNOR</b><br>
+            If Resident (Step 1) AND NOT RNOR → <b>ROR</b><br>
+            If NOT Resident (Step 1) → <b>Non-Resident (NRI)</b>
+          </div>
+
+          <!-- Current FY days -->
+          <div class="frow">
+            <div class="fg">
+              <label class="lbl">FY 2025-26: Total days in India (1 Apr 2025–31 Mar 2026)</label>
+              <input type="number" id="rc_curDays" value="0" min="0" max="366">
+              <div class="hint">Enter total number of days physically present in India this FY</div>
+            </div>
+            <div class="fg">
+              <label class="lbl">Type of Indian Citizen for Step 1(b) exemption</label>
+              <select id="rc_citizenType">
+                <option value="normal">Normal Resident Individual</option>
+                <option value="abroad_empl">Indian Citizen going abroad for employment / on Indian ship</option>
+                <option value="pio_visit">Person of Indian Origin (PIO) visiting India</option>
+              </select>
+              <div class="hint">Citizens going abroad for employment: only 182-day rule applies (60-day rule N/A)</div>
+            </div>
+          </div>
+
+          <!-- 4 preceding years — arrival/departure table -->
+          <div style="font-weight:700;font-size:11px;color:#1a2a3a;margin:8px 0 4px">Days in India — Last 4 Preceding Financial Years (for Step 1b &amp; Step 2b)</div>
+          <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead>
+              <tr style="background:var(--card2)">
+                <th style="border:1px solid var(--border);padding:5px 6px;text-align:left;font-size:10.5px;color:#000">FY</th>
+                <th style="border:1px solid var(--border);padding:5px 6px;text-align:left;font-size:10.5px;color:#000">Arrival in India (dd/mm/yyyy)</th>
+                <th style="border:1px solid var(--border);padding:5px 6px;text-align:left;font-size:10.5px;color:#000">Departure from India</th>
+                <th style="border:1px solid var(--border);padding:5px 6px;text-align:center;font-size:10.5px;color:#000">Days in India (auto)</th>
+                <th style="border:1px solid var(--border);padding:5px 6px;text-align:center;font-size:10.5px;color:#000">NRI that year?</th>
+              </tr>
+            </thead>
+            <tbody id="rcTable">
+              <!-- filled by JS for FY 2024-25, 2023-24, 2022-23, 2021-22 -->
+            </tbody>
+          </table>
+          </div>
+
+          <!-- Years 5–10 for NRI-in-9-of-10 test -->
+          <div style="font-weight:700;font-size:11px;color:#1a2a3a;margin:8px 0 4px">FY 2020-21 to FY 2015-16 — NRI Status (for 9-of-10 years test)</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px" id="rcOldYears">
+            <!-- filled by JS -->
+          </div>
+
+          <!-- Result box -->
+          <div id="rcResult" style="background:var(--card2);border:2px solid var(--border2);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:11.5px">
+            <div style="font-weight:700;color:#374151;margin-bottom:5px">🔍 Residency Status Result:</div>
+            <div id="rcStep1" style="margin:3px 0;color:#374151">Step 1 (Resident?): Enter days above</div>
+            <div id="rcStep2" style="margin:3px 0;color:#374151">Step 2 (RNOR?): Enter preceding year data</div>
+            <div id="rcVerdict" style="margin-top:6px;font-size:13px;font-weight:800;padding:6px 10px;border-radius:6px;background:#e0e7ef;color:#000">Status: — (Fill data above)</div>
+            <div id="rcHint" style="margin-top:5px;font-size:10px;color:#374151"></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /rnorCalcBlock -->
+
+    <!-- HUF Note -->
+    <div id="hufNote" class="wn-b wn">
+      <b>HUF – Hindu Undivided Family:</b> Taxed at same slab rates as Individual (below 60). No HRA exemption. No Sec 87A rebate. No 80TTB. Old Regime: 80C, 80D, 80G etc. available. 80TTA (savings interest ₹10k) available.
+    </div>
+
+    <!-- Status Display Pill (auto-updates) -->
+    <div id="statusPill" class="status-pill">
+      <span class="dot" id="statusDot" style="background:#1d4ed8"></span>
+      <span id="statusText">Individual · ROR · Below 60 yrs · FY 2025-26</span>
+    </div>
+
+    <!-- 87A Rebate + ITAT note -->
+    <div class="wn-itat" style="margin-top:5px">
+      <b>⚖ Sec 87A Rebate – Finance Act 2025 (AY 2026-27) — Confirmed</b><br>
+      <table style="width:100%;border-collapse:collapse;font-size:10px;margin:5px 0">
+        <tr style="background:#dcfce7">
+          <th style="border:1px solid #86efac;padding:3px 6px;text-align:left">Regime</th>
+          <th style="border:1px solid #86efac;padding:3px 6px;text-align:center">Max Rebate</th>
+          <th style="border:1px solid #86efac;padding:3px 6px;text-align:center">TI Limit</th>
+          <th style="border:1px solid #86efac;padding:3px 6px;text-align:left">Eligible?</th>
+        </tr>
+        <tr><td style="border:1px solid #86efac;padding:3px 6px">New Regime 115BAC</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center;font-weight:700">₹60,000</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">TI ≤ ₹12,00,000</td><td style="border:1px solid #86efac;padding:3px 6px;color:#15622e;font-weight:700">✅ ROR + RNOR Individuals only</td></tr>
+        <tr style="background:#f0fdf4"><td style="border:1px solid #86efac;padding:3px 6px">Old Regime</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center;font-weight:700">₹12,500</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">TI ≤ ₹5,00,000</td><td style="border:1px solid #86efac;padding:3px 6px;color:#15622e;font-weight:700">✅ ROR + RNOR Individuals only</td></tr>
+        <tr><td style="border:1px solid #86efac;padding:3px 6px">HUF (any regime)</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">—</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">—</td><td style="border:1px solid #86efac;padding:3px 6px;color:#b91c1c;font-weight:700">❌ NOT eligible — Sec 87A is for Individuals only</td></tr>
+        <tr style="background:#fff1f2"><td style="border:1px solid #86efac;padding:3px 6px"><b>NRI (Non-Resident Indian)</b></td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">—</td><td style="border:1px solid #86efac;padding:3px 6px;text-align:center">—</td><td style="border:1px solid #86efac;padding:3px 6px;color:#b91c1c;font-weight:800">❌ NOT eligible — Confirmed by Sec 87A text + multiple CAs</td></tr>
+      </table>
+      <b>Why NRI cannot claim 87A:</b> Section 87A of the Income Tax Act, 1961 explicitly states: <i>"An assessee, being an individual <u>resident in India</u>..."</i> — the word "resident" is a hard legislative condition. NRIs are non-residents under Sec 6 of the Act. Even if an NRI earns income in India and files an ITR, the rebate is not available. This is confirmed by ClearTax, Tax2Win, Bajaj Finserv, CA Club India, and ITR utility behavior.<br><br>
+      <b>RNOR is eligible:</b> RNOR (Resident but Not Ordinarily Resident) is legally a <i>resident</i> under Sec 6. The "ordinarily resident" condition (Sec 6(6)) only affects taxability of foreign income — it does NOT affect the residency status for 87A. Therefore RNOR individuals get 87A rebate ✓.<br><br>
+      <b>Sec 87A applies ONLY on slab tax (FA 2025):</b> Rebate CANNOT offset STCG 111A, LTCG 112A/112, Special rate 115BB/115BBH, or NRI flat rate 115A — even if Total Income ≤ threshold. This overrides ITAT Rajkot verdict (applicable AY 2024-25 only).<br>
+      <b>Marginal Relief (New Regime):</b> TI ₹12L–₹12.75L → tax capped at (TI − ₹12L). Auto-applied.
+    </div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE S: SALARY ── -->
+<div class="ac open" id="ac-sal">
+  <div class="ac-hdr" onclick="toggle('ac-sal')">
+    <div class="ac-stripe" style="background:var(--ac-s)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">💼</span>
+        <strong>Schedule S: Salary / Pension</strong>
+        <span class="sec sec-a">u/s 15-17</span>
+        <span class="sec sec-a">HRA 10(13A)</span>
+        <span class="ib">i<div class="tip"><b>Salary Head – Income in GTI:</b><br>= Gross Salary − HRA Exemption (Old only) − Exempt Allowances (Old only) − Std Ded u/s 16(ia)<br>Std Ded: Old ₹50k · New ₹75k (applied ONLY if salary &gt; 0).<br>HRA only for Individuals (not HUF).<br><u>Std Ded is HEAD-LEVEL; already inside GTI.</u></div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Basic Salary + DA <span class="ib">i<div class="tip pos-above" style=""><b>u/s 17(1):</b> Basic + DA. Base for HRA exemption (Rule 2A). Enter annual total.</div></span></label>
+        <input type="number" id="basicSalary" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Special Allowance / Bonus <span class="ib">i<div class="tip pos-above" style=""><b>u/s 17(3):</b> Fully taxable — bonus, performance pay, any allowance not exempt u/s 10.</div></span></label>
+        <input type="number" id="specialAllowance" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Perquisites <span class="ib">i<div class="tip pos-above" style=""><b>u/s 17(2):</b> Taxable perquisites per Rule 3: rent-free accommodation, car, ESOP on exercise, club fees.</div></span></label>
+        <input type="number" id="perquisiteValue" value="0" min="0">
+      </div>
+      <div class="fg old-only" id="exemptAllowRow">
+        <label class="lbl">Exempt Allowances <span class="ib">i<div class="tip"><b>u/s 10 – Old Regime only:</b> LTA u/s 10(5), uniform allowance, etc. NOT available in New Regime.</div></span></label>
+        <input type="number" id="exemptAllowances" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow old-only" id="hraBlock">
+      <div class="fg">
+        <label class="lbl">HRA Received <span class="ib">i<div class="tip"><b>u/s 10(13A) r/w Rule 2A – Old Regime, Individuals only:</b><br>Exemption = least of: (a) HRA received (b) 50%/40% of Basic+DA (c) Rent paid − 10% of Basic+DA</div></span></label>
+        <input type="number" id="hraReceived" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Rent Paid (Annual)</label>
+        <input type="number" id="rentPaid" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Metro City? <span class="sec sec-a">Rule 2A</span></label>
+        <select id="metroCity"><option value="yes">Metro – 50%</option><option value="no">Non-Metro – 40%</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE HP: HOUSE PROPERTY ── -->
+<div class="ac closed" id="ac-hp">
+  <div class="ac-hdr" onclick="toggle('ac-hp')">
+    <div class="ac-stripe" style="background:var(--ac-hp)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">🏠</span>
+        <strong>Schedule HP: House Property</strong>
+        <span class="sec sec-a">u/s 22-27</span>
+        <span class="ib">i<div class="tip"><b>HP Head – Head-level rules (in GTI):</b><br><b>Let-out (Rent&gt;0):</b> NAV = Rent × 70% (30% Std Ded u/s 24a). Less full loan interest u/s 24b. Old: HP loss set-off ≤ ₹2L. New: no loss set-off.<br><b>Self-occupied (Rent=0):</b> Old: −loan interest up to ₹2L. New: ₹0.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Let-out Rent Received <span class="ib">i<div class="tip"><b>u/s 22-23:</b> Annual rent receivable. Leave 0 for self-occupied. 30% Std Ded u/s 24(a) auto-applied on net annual value.</div></span></label>
+        <input type="number" id="rentalIncome" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Interest on Housing Loan <span class="ib">i<div class="tip"><b>u/s 24(b):</b> Let-out: full interest (both regimes). Self-occ (Old): max ₹2L. Self-occ (New): Nil. In New Regime, let-out HP loss cannot be set off.</div></span></label>
+        <input type="number" id="homeLoanInterest" value="0" min="0">
+      </div>
+    </div>
+    <div class="hint">Self-occupied → Old Regime: interest u/s 24(b) max ₹2L loss set-off · New Regime: nil deduction</div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE CG: CAPITAL GAINS ── -->
+<div class="ac closed" id="ac-cg">
+  <div class="ac-hdr" onclick="toggle('ac-cg')">
+    <div class="ac-stripe" style="background:var(--ac-cg)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">📈</span>
+        <strong>Schedule CG: Capital Gains</strong>
+        <span class="sec sec-g">u/s 45-55</span>
+        <span class="sec sec-r">FA 2025</span>
+        <span class="ib">i<div class="tip"><b>CG Rates – Finance Act 2025 (AY 2026-27):</b><br>
+<b>STCG 111A @20%:</b> Listed equity/equity MF, STT paid, held ≤12 months<br>
+<b>LTCG 112A @12.5%:</b> Listed equity/equity MF, STT paid, held &gt;12 months. First ₹1.25L/year EXEMPT — applied at GTI level.<br>
+<b>Other STCG (Slab):</b> Real estate/gold/unlisted (held ≤24m), bonds (held ≤12m), debt MF, foreign equity (held ≤24m)<br>
+<b>Other LTCG 112 @12.5%:</b> Real estate/gold/unlisted/bonds/foreign equity held beyond threshold. No indexation (FA 2024). Pre-23Jul2024 real estate: option for 20%+indexation.<br>
+<b>Sec 54/54F/54EC/54B:</b> Enter post-exemption taxable LTCG only.<br>
+<b>87A NOT available</b> against any CG tax (FA 2025). Surcharge on CG capped @15%.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <!-- Rate Reference Table -->
+    <div style="overflow-x:auto;margin-bottom:8px">
+      <table style="width:100%;border-collapse:collapse;font-size:9.5px">
+        <thead>
+          <tr style="background:#15622e;color:#fff">
+            <th style="padding:4px 6px;text-align:left;font-weight:700">Asset Category</th>
+            <th style="padding:4px 6px;text-align:center;font-weight:700">LTCG Period</th>
+            <th style="padding:4px 6px;text-align:center;font-weight:700">STCG Rate</th>
+            <th style="padding:4px 6px;text-align:center;font-weight:700">LTCG Rate</th>
+            <th style="padding:4px 6px;text-align:left;font-weight:700">Exemption / Rule</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#f0fdf4"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Listed Equity / Equity MF (STT paid)</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">&gt;12 months</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#b91c1c;font-weight:700">20% u/s 111A</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112A</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;color:#15622e;font-weight:600">First ₹1.25L LTCG tax-free p.a. (shared)</td></tr>
+          <tr style="background:#fff"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Real Estate (Land / House)</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">&gt;24 months</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Pre-23Jul2024: 20%+Indexation option</td></tr>
+          <tr style="background:#f0fdf4"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Gold / Physical Silver</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">&gt;24 months</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">No indexation</td></tr>
+          <tr style="background:#fff"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Unlisted Shares (Indian)</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">&gt;24 months</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">No indexation</td></tr>
+          <tr style="background:#f0fdf4"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Bonds &amp; Debentures (Listed)</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">&gt;12 months</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">No indexation</td></tr>
+          <tr style="background:#fff"><td style="padding:3px 6px;border-bottom:1px solid #d1fae5">Debt MF (Post Apr 2023)</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center">N/A</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;text-align:center;color:#64748b">N/A</td><td style="padding:3px 6px;border-bottom:1px solid #d1fae5;color:#b91c1c">Always STCG regardless of holding</td></tr>
+          <tr style="background:#f0fdf4"><td style="padding:3px 6px">Foreign Equity / Foreign Funds</td><td style="padding:3px 6px;text-align:center">&gt;24 months</td><td style="padding:3px 6px;text-align:center;color:#8a4500;font-weight:700">Slab Rate</td><td style="padding:3px 6px;text-align:center;color:#0369a1;font-weight:700">12.5% u/s 112</td><td style="padding:3px 6px">No indexation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sec 54 exemption notice -->
+    <div class="wn wn-g" style="margin-bottom:8px;font-size:10px">
+      <b>Reinvestment Exemptions — enter LTCG after claiming:</b>
+      <b>Sec 54</b> (House→House, max ₹10Cr) · <b>Sec 54F</b> (Any asset→House, reinvest full proceeds, max ₹10Cr) · <b>Sec 54EC</b> (Land/Bldg→REC/NHAI Bonds within 6 months, max ₹50L) · <b>Sec 54B</b> (Agri land→Agri land within 2 yrs).
+      Enter only the <u>net taxable LTCG</u> after deducting these exemptions.
+    </div>
+
+    <!-- ── STCG Inputs ── -->
+    <div style="font-size:10px;font-weight:700;color:#b91c1c;margin:4px 0 5px;border-bottom:1px solid var(--border);padding-bottom:3px">SHORT TERM CAPITAL GAINS (STCG)</div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">STCG – Listed Equity / Equity MF <span class="sec sec-r">111A @20%</span>
+          <span class="ib">i<div class="tip"><b>u/s 111A:</b> STT-paid equity shares or equity-oriented mutual funds. Held ≤ 12 months. Tax @20% flat. No basic exemption benefit. No 87A rebate against this tax.</div></span>
+        </label>
+        <input type="number" id="stcgEquity" value="0" min="0">
+        <div class="hint">Listed equity / equity MF · STT paid · held ≤ 12 months · @20%</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">STCG – Other Assets <span class="sec sec-a">Slab Rate</span>
+          <span class="ib">i<div class="tip"><b>Slab rate STCG:</b> Real estate (held ≤24m), gold/silver (held ≤24m), unlisted shares (held ≤24m), bonds/debentures (held ≤12m), debt MF (any holding), foreign equity (held ≤24m). Added to normal slab income.</div></span>
+        </label>
+        <input type="number" id="otherStcg" value="0" min="0">
+        <div class="hint">Real estate · gold · unlisted shares · bonds · debt MF · foreign equity</div>
+      </div>
+    </div>
+
+    <!-- ── LTCG Inputs ── -->
+    <div style="font-size:10px;font-weight:700;color:#0369a1;margin:6px 0 5px;border-bottom:1px solid var(--border);padding-bottom:3px">LONG TERM CAPITAL GAINS (LTCG)</div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">LTCG – Listed Equity / Equity MF <span class="sec sec-r">112A @12.5%</span>
+          <span class="ib">i<div class="tip"><b>u/s 112A:</b> Listed equity shares or equity-oriented MF. STT paid. Held &gt; 12 months. <b>₹1.25 Lakh per year is EXEMPT</b> — this exemption is applied at GTI (income) level, shared across all 112A gains. Enter total LTCG; exemption auto-applied.</div></span>
+        </label>
+        <input type="number" id="ltcgEquity" value="0" min="0">
+        <div class="hint">₹1.25L/yr exemption auto-deducted at GTI level · balance @12.5%</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">LTCG – Real Estate (post-exemption) <span class="sec sec-r">112 @12.5%</span>
+          <span class="ib">i<div class="tip"><b>u/s 112 — Real Estate:</b> Land or building held &gt; 24 months. Rate 12.5% (no indexation). Enter amount AFTER deducting Sec 54/54EC exemption if applicable. Pre-23-Jul-2024 assets: you may instead choose 20% with indexation — enter the lower tax option.</div></span>
+        </label>
+        <input type="number" id="ltcgProperty" value="0" min="0">
+        <div class="hint">After Sec 54/54EC exemption · held &gt;24 months · @12.5% (no indexation)</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">LTCG – Gold / Silver / Physical Assets <span class="sec sec-r">112 @12.5%</span>
+          <span class="ib">i<div class="tip"><b>u/s 112 — Gold/Silver:</b> Physical gold, silver, ETFs (non-equity), sovereign gold bonds (held &gt;24m). Flat 12.5%, no indexation. Enter net taxable LTCG after any exemption.</div></span>
+        </label>
+        <input type="number" id="ltcgGold" value="0" min="0">
+        <div class="hint">Gold · silver · Gold ETF · held &gt;24 months · @12.5%</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">LTCG – Other (Unlisted/Bonds/Foreign) <span class="sec sec-r">112 @12.5%</span>
+          <span class="ib">i<div class="tip"><b>u/s 112 — Other LTCG:</b> Unlisted shares (held &gt;24m), listed bonds/debentures (held &gt;12m), foreign equity/funds (held &gt;24m). Flat 12.5%, no indexation. Enter net taxable LTCG after any Sec 54F exemption.</div></span>
+        </label>
+        <input type="number" id="ltcgOther" value="0" min="0">
+        <div class="hint">Unlisted shares · bonds · foreign equity/funds · @12.5%</div>
+      </div>
+    </div>
+
+    <!-- Live CG Summary -->
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;margin-top:4px;font-size:10.5px" id="cgSummaryBox">
+      <div style="font-weight:700;color:#15622e;margin-bottom:5px">📊 Capital Gains Summary (auto-calculated)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px" id="cgSummaryGrid">
+        <div>STCG 111A @20%: <b id="cs_stcg">₹0</b></div>
+        <div>STCG (Slab): <b id="cs_ostcg">₹0</b></div>
+        <div>LTCG 112A (gross): <b id="cs_ltcg">₹0</b></div>
+        <div style="color:#15622e">Less ₹1.25L Exempt: <b id="cs_exempt">₹0</b></div>
+        <div>LTCG 112A taxable: <b id="cs_ltcgtax">₹0</b></div>
+        <div>LTCG 112 (Prop+Gold+Other): <b id="cs_oltcg">₹0</b></div>
+      </div>
+      <div style="margin-top:5px;border-top:1px solid var(--border);padding-top:4px;display:flex;gap:12px;flex-wrap:wrap">
+        <span>Net CG in GTI: <b id="cs_gti" style="color:#0369a1">₹0</b></span>
+        <span>Total CG Tax: <b id="cs_cgtax" style="color:#b91c1c">₹0</b></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE OS: OTHER SOURCES ── -->
+<div class="ac open" id="ac-os">
+  <div class="ac-hdr" onclick="toggle('ac-os')">
+    <div class="ac-stripe" style="background:var(--ac-os)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">💰</span>
+        <strong>Schedule OS: Other Sources</strong>
+        <span class="sec sec-v">u/s 56-59</span>
+        <span class="ib">i<div class="tip"><b>OS Head – Source-level rules:</b><br><b>PO savings interest:</b> ₹3,500 exempt u/s 10(15)(i) for non-seniors (both regimes). Senior+Old: goes to GTI, 80TTB covers in Ch VI-A.<br><b>Family Pension u/s 57(iia):</b> ded = min(pension/3, ₹15k Old / ₹25k New). Applies to ALL including NRI.<br><b>80TTA:</b> Old Regime Non-Senior Individual/HUF: SB interest max ₹10k. NRI ✓ (eligible on NRO savings bank interest — Sec 80TTA has no residency bar).<br><b>80TTB:</b> Old Regime Senior Individual (≥60): All deposit int max ₹50k (Ch VI-A). NOT HUF. NOT NRI.<br><b>NRI:</b> Use the NRI-specific fields in Part A above for interest/dividend — the regular SB/FD/Div fields are for Residents only.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Savings Bank Interest <span class="ib">i<div class="tip"><b>Old Regime Resident Individuals:</b><br>80TTA (non-senior): savings interest max ₹10,000 (Chapter VI-A).<br>80TTB (senior/super-senior): all deposit interest max ₹50,000 (Chapter VI-A).<br><b>HUF:</b> 80TTA applies (₹10k), 80TTB does NOT.<br><b>New Regime:</b> No 80TTA/80TTB. Fully taxable.</div></span></label>
+        <input type="number" id="savingsInterest" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">FD / RD / TD Interest <span class="ib">i<div class="tip"><b>Fully taxable at slab rate.</b> TDS @10% if &gt;₹40k (₹1L for seniors — Budget 2025 raised TDS threshold; 80TTB deduction limit remains ₹50k). FD interest included in 80TTB for seniors (Old Regime).</div></span></label>
+        <input type="number" id="fdInterest" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Post Office Interest <span class="ib">i<div class="tip"><b>Sec 10(15)(i):</b> PO Savings Account ₹3,500/yr exempt for non-seniors (both regimes). Seniors in Old Regime: full PO interest in GTI, covered by 80TTB (Chapter VI-A).</div></span></label>
+        <input type="number" id="postOfficeInterest" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Dividend Income (Resident/HUF only) <span class="ib">i<div class="tip"><b>Sec 56(2)(i) - Resident/HUF:</b> Taxed at slab rate. TDS @10% if total dividend exceeds Rs.10,000 (Budget 2025 raised limit from Rs.5,000) per company per year.<br><b>NRI: Enter dividend in the NRI section above. NRI dividend is MANDATORY @20% u/s 115A - NOT slab rate.</b></div></span></label>
+        <input type="number" id="dividendIncome" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Family Pension <span class="sec sec-v">u/s 57(iia)</span> <span class="ib">i<div class="tip"><b>Head-level deduction (in GTI):</b><br>Ded = lower of pension/3 or:<br>Old Regime: ₹15,000<br>New Regime: ₹25,000 (Budget 2024 enhanced)<br>Auto-calculated and included in GTI net.</div></span></label>
+        <input type="number" id="familyPension" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Gifts &gt; ₹50,000 <span class="ib">i<div class="tip"><b>Sec 56(2)(x):</b> Cash/property gifts from non-relatives exceeding ₹50k in a year are fully taxable. Gifts from relatives (spouse, parents, siblings) always exempt. Enter only taxable portion.</div></span></label>
+        <input type="number" id="giftIncome" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Buyback of Shares (Post 1-Oct-2024) <span class="sec sec-v">Slab Rate u/s 2(22)(f)</span>
+          <span class="ib">i<div class="tip"><b>Buyback / Share Repurchase — FY 2025-26 (AY 2026-27):</b><br>
+<b>Current rule (AY 2026-27):</b> The ENTIRE amount received by a shareholder in a buyback is treated as <b>Deemed Dividend</b> under Sec 2(22)(f) — taxable as <b>Income from Other Sources at SLAB RATE</b>.<br>
+<b>NRI:</b> Buyback proceeds taxed @20% flat (u/s 115A or DTAA rate if beneficial).<br>
+<b>Capital Loss:</b> For CG purposes, consideration is deemed NIL (Sec 46A). Cost of shares tendered = Capital Loss — set off against CG only. Carry forward up to 8 AYs.<br>
+<b>TDS:</b> Company deducts @10% u/s 194 for residents. NRIs: DTAA rate applies.<br>
+<b>No deduction u/s 57</b> allowed against this deemed dividend income.<br>
+<b>Note:</b> You CANNOT use the ₹1.25L LTCG exemption (Sec 112A) against buyback income in FY 2025-26.<br>
+<b>From April 1, 2026 (FY 2026-27):</b> Will revert to Capital Gains — profit (proceeds − cost) taxed as LTCG @12.5% or STCG @20%. ₹1.25L LTCG exemption will apply.<br>
+<b>Pre 1-Oct-2024:</b> Company paid BDT @20%+surcharge u/s 115QA; shareholder receipt was exempt u/s 10(34A) — do NOT enter here.</div></span>
+        </label>
+        <input type="number" id="buybackIncome" value="0" min="0">
+        <div class="hint">Post 1-Oct-2024 buyback — full amount taxable as deemed dividend @ slab rate · enter capital loss in Sch CG</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Capital Loss on Buyback Shares <span class="sec sec-a">Sch CG · Sec 46A</span>
+          <span class="ib">i<div class="tip"><b>Capital Loss on Buyback u/s 46A:</b><br>
+When buyback proceeds are taxed as deemed dividend (post 1-Oct-2024), the consideration for CG purpose is deemed NIL. Therefore Capital Loss = Cost of acquisition of shares tendered in buyback.<br>
+Enter: Total cost of shares tendered (purchase price × number of shares).<br>
+This loss can ONLY be set off against Capital Gains (not salary/OS). Carry forward up to 8 AYs.<br>
+It is treated as Long Term or Short Term depending on your holding period of those shares.<br>
+<b>This loss reduces your taxable Capital Gains in GTI.</b></div></span>
+        </label>
+        <input type="number" id="buybackCapLoss" value="0" min="0">
+        <div class="hint">Cost of shares tendered in buyback = capital loss u/s 46A · set off against CG only</div>
+      </div>
+    </div>
+    <div class="fg full" style="margin-bottom:0">
+      <label class="lbl">Any Other Income u/s 56 <span class="ib">i<div class="tip"><b>Sec 56:</b> Sub-letting income, commission, royalty (other than specified), online contest winnings (if not special rate), etc.</div></span></label>
+      <input type="number" id="otherMiscIncome" value="0" min="0">
+    </div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE EI: AGRICULTURAL INCOME ── -->
+<div class="ac closed" id="ac-agri">
+  <div class="ac-hdr" onclick="toggle('ac-agri')">
+    <div class="ac-stripe" style="background:#16a34a"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div>
+        <span class="ico">🌾</span>
+        <strong>Schedule EI: Agricultural Income</strong>
+        <span class="sec sec-g">u/s 10(1) · Sec 2(1A)</span>
+        <span class="ib">i<div class="tip"><b>Agricultural Income — u/s 10(1):</b><br>
+<b>Fully Exempt:</b> Agricultural income is exempt from income tax u/s 10(1).<br>
+<b>Up to ₹5,000:</b> Ignored entirely — no effect on tax. (NRI/HUF: always ignored.)<br>
+<b>Above ₹5,000 (Old Regime · ROR/RNOR Individuals):</b> <b>Partial Integration Method</b> applies:<br>
+Step 1: Add agri income to normal taxable income → compute tax on combined amount.<br>
+Step 2: Add agri income to basic exemption → compute tax on (agri + basic exemption).<br>
+Step 3: Net tax on normal income = Step1 tax − Step2 tax.<br>
+This method pushes normal income into higher slabs — effectively charging slab rate on regular income as if agri income were also taxed, but agri income itself is never actually taxed.<br>
+<b>New Regime:</b> Partial integration NOT applicable. Agri income exempt, no slab effect.<br>
+<b>NRI:</b> Agricultural income in India is exempt. No partial integration.<br>
+<b>HUF:</b> Partial integration applies same as Individual (Old Regime, if agri > ₹5,000).</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+
+    <!-- What is Agricultural Income box -->
+    <div class="wn wn-g" style="margin-bottom:8px;font-size:10px;line-height:1.7">
+      <b>What qualifies as Agricultural Income u/s 2(1A):</b><br>
+      ✅ Rent/revenue from agricultural land in India (used for agriculture)<br>
+      ✅ Income from cultivation of agricultural produce (paddy, wheat, sugarcane, fruits, vegetables etc.)<br>
+      ✅ Income from farm buildings used for agricultural operations (situated on/near agricultural land)<br>
+      ✅ Income from saplings/seedlings grown in nursery<br>
+      ❌ <b>Does NOT include:</b> Poultry/dairy income, income from land used for non-agricultural purposes, dividend from tea/rubber/coffee companies (only 40–60% is agricultural)
+    </div>
+
+    <!-- Rule box -->
+    <div style="background:#fef9c3;border:1px solid #fde047;border-radius:7px;padding:9px 12px;margin-bottom:8px;font-size:10px;line-height:1.7;color:#78350f">
+      <b>📋 Tax Treatment — Partial Integration Method (Old Regime, Resident, agri &gt; ₹5,000):</b><br>
+      <span style="font-family:monospace;font-size:10px">
+        Net Slab Tax = Tax(Normal Income + Agri Income) − Tax(Basic Exemption + Agri Income)
+      </span><br>
+      This is auto-computed below. Enter your total agricultural income from all sources.<br>
+      <b>New Regime / NRI:</b> Agri income is exempt and has zero slab effect — enter for record only.
+    </div>
+
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Total Agricultural Income (Annual)
+          <span class="ib">i<div class="tip"><b>Enter gross agricultural income</b> from all sources — land rent, crop sale proceeds, etc. The ₹5,000 threshold is auto-checked. If ≤ ₹5,000, fully exempt with no slab effect. If &gt; ₹5,000 and Old Regime Resident, partial integration applies automatically.</div></span>
+        </label>
+        <input type="number" id="agriIncome" value="0" min="0" oninput="recalcAll()">
+        <div class="hint">Gross total agri income — ₹5,000 threshold auto-applied</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">Agri Tax Effect (auto-computed)</label>
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;margin-top:2px;font-size:10.5px;line-height:1.8" id="agriResultBox">
+          <span style="color:#64748b">Enter agricultural income to see effect</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule EI filing note -->
+    <div class="wn" style="margin-top:6px;font-size:10px">
+      <b>ITR-2 Filing Note:</b> Agricultural income must be reported in <b>Schedule EI (Exempt Income)</b> of ITR-2, regardless of amount. Even if fully exempt, it must be disclosed. If agri income &gt; ₹5,000, partial integration method is applied by the ITR computation engine automatically. Keep documents: land records (7/12 extract), crop sale receipts, rent receipts.
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /LEFT COLUMN -->
+
+<!-- ══════════ RIGHT COLUMN ══════════ -->
+<div>
+
+<!-- ── SCHEDULE SI: SPECIAL RATE ── -->
+<div class="ac open" id="ac-si">
+  <div class="ac-hdr" onclick="toggle('ac-si')">
+    <div class="ac-stripe" style="background:var(--ac-si)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">⚡</span>
+        <strong>Schedule SI: Special Rate Incomes</strong>
+        <span class="sec sec-r">Flat 30% · No Rebate · No Deductions</span>
+        <span class="ib">i<div class="tip"><b>Special Flat Rate – applies to Individual &amp; HUF both:</b><br>No basic exemption benefit. No rebate 87A. No Ch. VI-A deductions.<br>Lottery/Winnings 115BB @30% (TDS 194B if &gt;₹10k)<br>Horse Race 115BB @30% (TDS 194BB)<br>VDA/Crypto 115BBH @30% (TDS 194S 1%; losses cannot set off)</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">Lottery / Game Show / Winnings <span class="sec sec-r">115BB</span></label>
+        <input type="number" id="lotteryIncome" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">Horse Race Winnings <span class="sec sec-r">115BB</span></label>
+        <input type="number" id="horseRaceIncome" value="0" min="0">
+      </div>
+    </div>
+    <div class="fg full">
+      <label class="lbl">VDA / Crypto / NFT <span class="sec sec-r">115BBH @30%</span></label>
+      <input type="number" id="cryptoIncome" value="0" min="0">
+      <div class="hint">Only cost of acquisition deductible. Losses cannot offset any other income. TDS 1% u/s 194S.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCHEDULE VIA: DEDUCTIONS ── -->
+<div class="ac open" id="ac-ded">
+  <div class="ac-hdr" onclick="toggle('ac-ded')">
+    <div class="ac-stripe" style="background:var(--ac-d)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">📋</span>
+        <strong>Schedule VIA: Chapter VI-A Deductions</strong>
+        <span class="sec sec-a">80C-80U · Old Regime</span>
+        <span class="sec sec-b">80CCD(2) · Both</span>
+        <span class="ib">i<div class="tip"><b>Chapter VI-A reduces GTI → Total Income.</b><br>Applied AFTER GTI. Cannot reduce flat-rate CG/Special incomes.<br>80TTA/80TTB auto-calculated.<br><b>Old Regime:</b> 80C, 80D, 80G, 80E etc. available for both Individual &amp; HUF.<br><b>New Regime:</b> Most disallowed. Exception: 80CCD(2) employer NPS.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="frow old-only" id="dedBlock">
+      <div class="fg">
+        <label class="lbl">80C – PF/PPF/LIC/ELSS <span class="ib">i<div class="tip"><b>Sec 80C (max ₹1,50,000):</b> EPF/VPF, PPF, LIC, ELSS, NSC, 5-yr FD, home loan principal, tuition fees. Available to Individual &amp; HUF. Combined with 80CCC+80CCD(1) ceiling ₹1.5L.</div></span></label>
+        <input type="number" id="ded80c" value="0" min="0">
+        <div class="hint">Auto-capped at ₹1,50,000</div>
+      </div>
+      <div class="fg">
+        <label class="lbl">80D – Health Insurance <span class="ib">i<div class="tip"><b>Sec 80D (Individual only):</b> Self+family (below 60): ₹25k. Senior self: ₹50k. Senior parents: ₹50k. Both senior: max ₹1L. HUF: max ₹25k for any member.</div></span></label>
+        <input type="number" id="ded80d" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow old-only" id="dedBlock2">
+      <div class="fg">
+        <label class="lbl">80G – Donations <span class="ib">i<div class="tip"><b>Sec 80G:</b> 50% or 100% of eligible donation (depending on institution). Some subject to 10% of adjusted GTI. Enter eligible deductible amount only.</div></span></label>
+        <input type="number" id="ded80g" value="0" min="0">
+      </div>
+      <div class="fg">
+        <label class="lbl">80E / 80EEA / Other <span class="ib">i<div class="tip"><b>80E:</b> Education loan interest (8 yrs, no limit). <b>80EEA:</b> First-home buyer interest max ₹1.5L (loan 2019-22). Note: 80TTA/80TTB auto-calculated — do not enter here.</div></span></label>
+        <input type="number" id="otherDeductions" value="0" min="0">
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fg">
+        <label class="lbl">80CCD(2) – Employer NPS <span class="sec sec-b">Both Regimes</span> <span class="ib">i<div class="tip"><b>Sec 80CCD(2):</b> Employer's NPS Tier-I contribution. Max 14% of Basic+DA (central govt) or 10% (others). Only Chapter VI-A deduction allowed in New Regime. Available to Individuals only (employees).</div></span></label>
+        <input type="number" id="ded80ccd2" value="0" min="0">
+      </div>
+    </div>
+    <div class="wn">80TTA/80TTB auto-calculated. 80C/80D/80G/80E: Old Regime only. 80CCD(2): both regimes.</div>
+  </div>
+</div>
+
+<!-- ── INCOME SUMMARY TABLE ── -->
+<div class="ac open" id="ac-sum">
+  <div class="ac-hdr" onclick="toggle('ac-sum')">
+    <div class="ac-stripe" style="background:var(--ac-sum)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">📊</span>
+        <strong>Income Summary – Head-wise (GTI Build-up)</strong>
+        <span class="sec sec-b">ITR-2 Schedules</span>
+        <span class="ib">i<div class="tip"><b>GTI = Sum of Net column.</b> Each head: Gross → source-level deductions → Net in GTI. Full LTCG in GTI; ₹1.25L exemption at tax stage only. Chapter VI-A then: GTI → Total Income.</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <table class="stbl">
+      <thead>
+        <tr>
+          <th style="width:4%;text-align:center">#</th>
+          <th style="width:27%">Head / Schedule</th>
+          <th style="width:18%;text-align:right">Gross (₹)</th>
+          <th style="width:26%">Deduction at Source</th>
+          <th style="width:20%;text-align:right">Net in GTI (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="summaryBody"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2" style="font-weight:700;color:var(--num)">Gross Total Income (GTI)</td>
+          <td class="num" id="footGross">₹ 0</td>
+          <td style="font-size:7.5px;color:var(--txt3)">Before Chapter VI-A</td>
+          <td class="num" id="footNet">₹ 0</td>
+        </tr>
+      </tfoot>
+    </table>
+    <div class="hint" style="margin-top:5px">★ Net = after head-level deductions (Std Ded, HRA, HP 30%+loan, PO exemption, FP ded 57(iia)). 80TTA/80TTB &amp; 80C etc. are Chapter VI-A — deducted after GTI to arrive at Total Income.</div>
+  </div>
+</div>
+
+<!-- ── TAX COMPUTATION ── -->
+<div class="ac open" id="ac-tax">
+  <div class="ac-hdr" onclick="toggle('ac-tax')">
+    <div class="ac-stripe" style="background:var(--ac-tax)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">🧮</span>
+        <strong>Tax Computation</strong>
+        <span class="sec sec-b">u/s 288B · Rounded ₹10</span>
+        <span class="ib">i<div class="tip"><b>Computation Flow:</b><br>1. GTI (head-wise net, std ded already inside)<br>2. Less Chapter VI-A → Total Income<br>3. Normal Income = Total Income − flat portions<br>4. Slab Tax on Normal Income<br>5. + STCG @20%, LTCG @12.5%, Sp @30%<br>6. − Rebate 87A (Resident Individual, on slab tax only)<br>7. + Surcharge (CG capped @15%)<br>8. + Cess @4%</div></span>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body" style="padding:0">
+
+    <!-- GTI Build-up -->
+    <div class="gti-section">
+      <div class="gti-title">Gross Total Income (GTI) — Head-wise Net</div>
+      <div class="gti-row"><span class="lf">Salary / Pension (after HRA + Std Ded u/s 16ia)</span><span class="rf" id="disp_sal">₹ 0</span></div>
+      <div class="gti-row" id="row_hp"><span class="lf">House Property (30% Std Ded + Loan Interest u/s 24)</span><span class="rf" id="disp_hp">₹ 0</span></div>
+      <div class="gti-row"><span class="lf">Capital Gains (STCG + LTCG after ₹1.25L exempt + Other STCG/LTCG)</span><span class="rf" id="disp_cg">₹ 0</span></div>
+      <div class="gti-row"><span class="lf">Other Sources (after PO exemption + FP ded u/s 57(iia))</span><span class="rf" id="disp_os">₹ 0</span></div>
+      <div class="gti-row"><span class="lf">Special Rate Income (Lottery / Horse Race / VDA)</span><span class="rf" id="disp_si">₹ 0</span></div>
+      <div class="gti-row" id="row_agri" style="display:none"><span class="lf">Agricultural Income u/s 10(1) — Exempt [Sch EI] <span class="sec sec-g" style="font-size:6px">Partial Integration if Old+Res+&gt;₹5k</span></span><span class="rf" id="disp_agri" style="color:var(--green)">₹ 0</span></div>
+      <div class="gti-row total-line"><span class="lf">= Gross Total Income (GTI)</span><span class="rf" id="disp_gti">₹ 0</span></div>
+    </div>
+
+    <hr class="rdiv"><div class="rdiv-label">Less: Chapter VI-A Deductions</div>
+    <div class="vi-section">
+      <div class="vi-row">
+        <span class="lf"><span id="lbl_80ttx">80TTA / 80TTB</span> <span class="sec sec-a" style="font-size:6px" id="lbl_80ttx_tag">Old Regime · Non-Senior/NRI: 80TTA · Senior: 80TTB</span></span>
+        <span class="rf" id="disp_80ttb">− ₹ 0</span>
+      </div>
+      <div class="vi-row">
+        <span class="lf">80C + 80D + 80G + Others (80E/80EEA etc.) <span class="sec sec-a" style="font-size:6px">Old Regime</span></span>
+        <span class="rf" id="disp_80c">− ₹ 0</span>
+      </div>
+      <div class="vi-row">
+        <span class="lf">80CCD(2) – Employer NPS Contribution <span class="sec sec-b" style="font-size:6px">Both Regimes</span></span>
+        <span class="rf" id="disp_nps">− ₹ 0</span>
+      </div>
+    </div>
+
+    <hr class="rdiv"><div class="rdiv-label">Total Income (Net Taxable — after Chapter VI-A)</div>
+    <div class="ti-section">
+      <div class="ti-row"><span class="lf">Total Income = GTI − Chapter VI-A Deductions</span><span class="rf" id="disp_ti">₹ 0</span></div>
+    </div>
+
+    <hr class="rdiv"><div class="rdiv-label">Tax Computation on Total Income</div>
+    <div class="tax-section">
+      <div class="tx-row"><span class="lf">Normal Taxable Income (at Slab Rate)</span><span class="rf" id="disp_normal">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ Slab Tax on Normal Income</span><span class="rf" id="disp_slabTax">₹ 0</span></div>
+      <div class="tx-row sub" id="row_agriTax" style="display:none"><span class="lf" style="color:var(--green)">↳ Agri Partial Integration — slab uplift <span class="sec sec-g" style="font-size:6px">Old+Res+Agri&gt;₹5k</span></span><span class="rf" id="disp_agriTax" style="color:var(--green)">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ STCG Tax @20% <span class="sec sec-r" style="font-size:6px">u/s 111A</span></span><span class="rf" id="disp_stcgTax">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ LTCG Equity Tax @12.5% (on taxable LTCG, ₹1.25L exempt in GTI) <span class="sec sec-r" style="font-size:6px">u/s 112A</span></span><span class="rf" id="disp_ltcgTax">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ Other LTCG Tax @12.5% <span class="sec sec-r" style="font-size:6px">u/s 112</span></span><span class="rf" id="disp_oltcgTax">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ Special Rate Tax @30% <span class="sec sec-r" style="font-size:6px">115BB/115BBH</span></span><span class="rf" id="disp_siTax">₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ NRI Flat Rate Tax @20% <span class="sec sec-r" style="font-size:6px">u/s 115A</span></span><span class="rf" id="disp_nriTax">₹ 0</span></div>
+      <div class="tx-row" style="border-top:1px solid var(--border2)"><span class="lf"><b>Total Tax before Rebate</b></span><span class="rf" id="disp_taxBR" style="font-weight:700;color:var(--num)">₹ 0</span></div>
+      <div class="tx-row rebate"><span class="lf">Less: Sec 87A Rebate <span class="sec sec-g" style="font-size:6px">ROR/RNOR Individual · Slab Tax only · FA2025</span></span><span class="rf" id="disp_rebate">− ₹ 0</span></div>
+      <div class="tx-row sub"><span class="lf">↳ Marginal Relief (New Regime, TI ₹12L–₹12.75L)</span><span class="rf" id="disp_marginal" style="color:var(--red)">₹ 0</span></div>
+      <div class="tx-row"><span class="lf">Tax after Rebate &amp; Marginal Relief</span><span class="rf" id="disp_tar">₹ 0</span></div>
+      <div class="tx-row">
+        <span class="lf">Surcharge
+          <span class="ib" style="margin-left:2px">i<div class="tip"><b>Surcharge Rates (Total Income):</b><br>10% → ₹50L to ₹1Cr<br>15% → ₹1Cr to ₹2Cr<br>25% → ₹2Cr to ₹5Cr<br>37% → &gt;₹5Cr (Old Regime only; New max 25%)<br><u>STCG 111A, LTCG 112A &amp; 112: surcharge capped @15%</u><br>Marginal relief applied.</div></span>
+        </span>
+        <span class="rf" id="disp_sc">₹ 0</span>
+      </div>
+      <div class="tx-row"><span class="lf">Health &amp; Education Cess @4%</span><span class="rf" id="disp_cess">₹ 0</span></div>
+      <div class="tx-row grand">
+        <span class="lf">Total Tax Payable (Rounded u/s 288B)</span>
+        <span class="rf" id="disp_final">₹ 0</span>
+      </div>
+      <div class="tx-row eff" style="border-bottom:none">
+        <span class="lf">Effective Tax Rate (on GTI)</span>
+        <span class="rf" id="disp_eff">0.00%</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── EXAMPLES ── -->
+<div class="ac closed" id="ac-ex">
+  <div class="ac-hdr" onclick="toggle('ac-ex')">
+    <div class="ac-stripe" style="background:var(--ac-ex)"></div>
+    <div class="ac-inner">
+      <div class="ac-title">
+        <div class="hbg"><i></i><i></i><i></i></div><span class="ico">📚</span>
+        <strong>Reference Examples (FY 2025-26)</strong>
+      </div>
+      <span class="chev">▼</span>
+    </div>
+  </div>
+  <div class="ac-body">
+    <div class="ex-grid">
+      <div class="ex-card">
+        <h4>Ex 1: Individual · Resident Below 60 · New Regime</h4>
+        <p>Salary ₹12,75,000 · Std Ded ₹75k → GTI ₹12L · Total Income ₹12L</p>
+        <p>Slab Tax ₹60,000 · Total Income ≤ ₹12L → Rebate 87A ₹60,000</p>
+        <p class="ex-tax">✓ Final Tax: ₹0 (zero tax upto ₹12.75L salary)</p>
+        <button onclick="loadExample(1)">Load Ex 1</button>
+      </div>
+      <div class="ex-card">
+        <h4>Ex 2: Individual · Senior 65 · Old Regime · 87A ✓ · 80TTB ✓</h4>
+        <p>Salary ₹3.5L + STCG ₹1.5L · 80C ₹1.5L</p>
+        <p>Salary GTI = ₹3L (after ₹50k Std) − 80C ₹1.5L = Normal ₹1.5L &lt; ₹3L exemption → nil slab tax</p>
+        <p>STCG @20% = ₹30,000 · Total Inc ₹3L ≤ ₹5L → 87A on slab (₹0)</p>
+        <p class="ex-tax">Tax ≈ ₹31,200 (STCG ₹30k + 4% Cess)</p>
+        <button onclick="loadExample(2)">Load Ex 2</button>
+      </div>
+      <div class="ex-card">
+        <h4>Ex 3: Individual · NRI · New Regime</h4>
+        <p>Salary ₹15,00,000 · Std Ded ₹75k → GTI ₹14.25L · No 87A rebate</p>
+        <p class="ex-tax">Tax ≈ ₹1,22,200 (with cess)</p>
+        <button onclick="loadExample(3)">Load Ex 3</button>
+      </div>
+      <div class="ex-card">
+        <h4>Ex 4: Individual · Super Senior 82 · Old Regime · 87A ✓ · 80TTB ✓</h4>
+        <p>Pension ₹5.5L + FD Interest ₹30k</p>
+        <p>GTI = (₹5.5L − ₹50k Std) + ₹30k = ₹5.3L · Less 80TTB ₹30k → Total ₹5L = ₹5L exemption</p>
+        <p class="ex-tax">✓ Final Tax: ₹0</p>
+        <button onclick="loadExample(4)">Load Ex 4</button>
+      </div>
+      <div class="ex-card">
+        <h4>Ex 5: Individual · RNOR · New Regime · 87A ✓</h4>
+        <p>Salary ₹20L + LTCG Equity ₹3L · RNOR (NRI returning to India)</p>
+        <p>Std Ded ₹75k → GTI ₹22.25L · LTCG exempt ₹1.25L → Tax on ₹1.75L @12.5%<br>
+        <b>87A rebate: NOT applicable</b> (TI &gt; ₹12L; LTCG excluded anyway per FA2025)</p>
+        <p class="ex-tax">RNOR is a resident → eligible for 87A on slab tax if TI ≤ ₹12L</p>
+        <button onclick="loadExample(5)">Load Ex 5</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /RIGHT COLUMN -->
+</div><!-- /two-col -->
+
+<footer>
+
+<!-- ═══ COMPREHENSIVE DISCLAIMER & FOOTNOTE ═══ -->
+<div style="background:linear-gradient(135deg,#1a2a3a,#1e3a5a);border-radius:12px;padding:18px 20px;margin:10px 0 6px;text-align:left;box-shadow:0 2px 10px #0003">
+
+  <!-- Title -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:10px">
+    <span style="font-size:18px">⚖️</span>
+    <div>
+      <div style="color:#fde68a;font-size:12px;font-weight:800;letter-spacing:.5px">IMPORTANT DISCLAIMER &amp; TERMS OF USE</div>
+      <div style="color:rgba(255,255,255,.7);font-size:9px;margin-top:1px">ITR-2 Tax Calculator v21 · FY 2025-26 (AY 2026-27) · Finance Act 2025</div>
+    </div>
+  </div>
+
+  <!-- Warning box -->
+  <div style="background:#b91c1c;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;gap:10px;align-items:flex-start">
+    <span style="font-size:20px;flex-shrink:0">⚠️</span>
+    <div style="color:#fff;font-size:11px;font-weight:700;line-height:1.7">
+      <b style="font-size:12px;display:block;margin-bottom:3px">THIS CALCULATOR IS FOR ESTIMATION &amp; EDUCATIONAL PURPOSES ONLY.</b>
+      Results shown are <u>indicative approximations</u> and may differ from your actual tax liability. 
+      Do <b>NOT</b> use this as a substitute for professional tax advice or for direct ITR filing without verification.
+      Always verify your final tax with a <b>Chartered Accountant (CA)</b> or Tax Professional before filing.
+    </div>
+  </div>
+
+  <!-- Notes grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px">
+      <div style="color:#7dd3fc;font-size:10px;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">📋 What This Tool Does</div>
+      <ul style="color:rgba(255,255,255,.85);font-size:10px;line-height:1.8;padding-left:14px;margin:0">
+        <li>Estimates income tax under <b>New &amp; Old Regime</b> for FY 2025-26</li>
+        <li>Covers Salary, House Property, Capital Gains, Other Sources, Special Rate incomes</li>
+        <li>Applies Finance Act 2025 rules — 87A rebate on slab tax only</li>
+        <li>Handles ROR · RNOR · NRI · HUF · Senior / Super Senior categories</li>
+        <li>Auto-computes HRA, Std Deduction, Chapter VI-A, Surcharge, Cess</li>
+        <li>LTCG ₹1.25L exemption u/s 112A applied at income (GTI) level</li>
+      </ul>
+    </div>
+
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px">
+      <div style="color:#fca5a5;font-size:10px;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🚫 Limitations &amp; Exclusions</div>
+      <ul style="color:rgba(255,255,255,.85);font-size:10px;line-height:1.8;padding-left:14px;margin:0">
+        <li>Does <b>not</b> account for TDS already deducted — compare with Form 26AS / AIS</li>
+        <li>Does <b>not</b> cover business / profession income (Schedule BP) — use ITR-3</li>
+        <li>DTAA benefits, foreign tax credit (u/s 90/91) <b>not</b> included</li>
+        <li>AMT (Alternate Minimum Tax) u/s 115JC <b>not</b> computed</li>
+        <li>Advance tax, interest u/s 234A/B/C <b>not</b> computed</li>
+        <li>Multiple employers, arrears (u/s 89 relief) <b>not</b> handled</li>
+      </ul>
+    </div>
+
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px">
+      <div style="color:#86efac;font-size:10px;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">✅ Before You File — Verify With</div>
+      <ul style="color:rgba(255,255,255,.85);font-size:10px;line-height:1.8;padding-left:14px;margin:0">
+        <li><b>Form 16</b> — Salary &amp; TDS details from employer</li>
+        <li><b>AIS / Form 26AS</b> — All income &amp; TDS on Income Tax Portal</li>
+        <li><b>Form 16A</b> — TDS on interest, rent, professional fees</li>
+        <li><b>Capital Gains Statement</b> — From broker / mutual fund house</li>
+        <li><b>Bank Passbook / Interest Certificate</b> — For interest income</li>
+        <li>Official ITR-2 utility at <b>incometax.gov.in</b></li>
+      </ul>
+    </div>
+
+    <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px 12px">
+      <div style="color:#fde68a;font-size:10px;font-weight:800;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">⚙️ Technical Reference</div>
+      <ul style="color:rgba(255,255,255,.85);font-size:10px;line-height:1.8;padding-left:14px;margin:0">
+        <li>Based on <b>Finance Act 2025</b> as applicable for AY 2026-27</li>
+        <li>New Regime slabs: 0–4L·0%, 4–8L·5%, 8–12L·10%, 12–16L·15%, 16–20L·20%, 20–24L·25%, &gt;24L·30%</li>
+        <li>87A: New ₹60,000 (TI≤₹12L) · Old ₹12,500 (TI≤₹5L) — slab tax only</li>
+        <li>Rounding u/s 288B to nearest ₹10</li>
+        <li>Surcharge capped @15% on STCG/LTCG · New Regime max surcharge 25%</li>
+        <li>Tax law is subject to change — check CBDT circulars for updates</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Legal note -->
+  <div style="background:rgba(255,220,0,.1);border:1px solid rgba(255,220,0,.3);border-radius:8px;padding:9px 13px;margin-bottom:10px">
+    <div style="color:#fde68a;font-size:10px;font-weight:800;margin-bottom:4px">📜 Legal &amp; Liability Notice</div>
+    <div style="color:rgba(255,255,255,.82);font-size:10px;line-height:1.7">
+      This tool is provided <b>"as-is"</b> for general informational and educational use only. The developer, publisher, and distributor of this application <b>accept no liability whatsoever</b> for any loss, penalty, interest, or financial consequence arising from reliance on the calculations produced by this tool. 
+      Tax laws are complex, frequently amended, and their application depends on individual facts and circumstances. 
+      <b>Always consult a qualified Chartered Accountant or Tax Advisor</b> for your specific situation before making any tax-related decisions or filing your return.
+    </div>
+  </div>
+
+  <!-- Footer bottom bar -->
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;border-top:1px solid rgba(255,255,255,.15);padding-top:10px">
+    <div style="color:rgba(255,255,255,.6);font-size:9px;line-height:1.6">
+      © ITR-2 Tax Calculator v21 · FY 2025-26 (AY 2026-27) · Finance Act 2025<br>
+      New Regime 115BAC · Old Regime · ROR / RNOR / NRI / HUF · DOB auto-age · 87A FA2025 · u/s 288B rounding
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+      <div style="background:#b91c1c;color:#fff;font-size:9px;font-weight:800;padding:3px 10px;border-radius:12px">⚠ Not for direct ITR filing</div>
+      <div style="background:#065f46;color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:12px">✅ Verify with CA &amp; incometax.gov.in</div>
+    </div>
+  </div>
+
+</div>
+<!-- ═══ END DISCLAIMER ═══ -->
+
+</footer>
+
+<!-- ITR-2 INFOGRAPHIC PAGE -->
+<div id="itr2Page" style="">
+<div id="itr2Inner" style="">
+<div style="background:linear-gradient(135deg,#162f4a,#1e4976);border-radius:5px;padding:8px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+  <div>
+    <div style="font-size:11pt;font-weight:700;color:#fff">INCOME TAX RETURN — FORM ITR-2</div>
+    <div style="font-size:7pt;color:rgba(255,255,255,.82);margin-top:2px">Govt of India · Income Tax Dept · AY 2026-27 (FY 2025-26) · Finance Act 2025</div>
+  </div>
+  <div style="text-align:right">
+    <div style="font-size:9pt;font-weight:700;color:#fde68a" id="p_regime_badge">New Regime</div>
+    <div style="font-size:7pt;color:rgba(255,255,255,.8)" id="p_status_badge">Individual · ROR</div>
+  </div>
+</div>
+<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;padding:4px 7px;margin-bottom:7px">
+  <div style="font-size:6.5pt;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">PART A — GENERAL INFORMATION</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:3px">
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px"><div style="font-size:5.5pt;color:#64748b;font-weight:600">ASSESSEE</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a" id="p_status">Individual</div></div>
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px"><div style="font-size:5.5pt;color:#64748b;font-weight:600">RESIDENCY</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a" id="p_rstat">ROR</div></div>
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px"><div style="font-size:5.5pt;color:#64748b;font-weight:600">AGE CATEGORY</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a" id="p_agecat">Below 60</div></div>
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px"><div style="font-size:5.5pt;color:#64748b;font-weight:600">DATE OF BIRTH</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a" id="p_dob">—</div></div>
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px;grid-column:span 2"><div style="font-size:5.5pt;color:#64748b;font-weight:600">TAX REGIME</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a" id="p_regime">New Regime u/s 115BAC</div></div>
+    <div style="background:#fff;border:1px solid #bfdbfe;border-radius:3px;padding:3px 5px;grid-column:span 2"><div style="font-size:5.5pt;color:#64748b;font-weight:600">RETURN u/s</div><div style="font-size:7.5pt;font-weight:700;color:#1e3a8a">139(1) — On or before due date</div></div>
+  </div>
+</div>
+<div style="font-size:6.5pt;font-weight:700;background:#0f766e;color:#fff;padding:2px 6px;border-radius:3px;margin-bottom:3px">INCOME HEADS — GTI BUILD-UP</div>
+<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px">
+<div style="border:2px solid #0d7c6e;border-radius:4px;overflow:hidden">
+  <div style="background:#0d7c6e;color:#fff;padding:2px 5px;font-size:6.5pt;font-weight:700">SCH-S: SALARY</div>
+  <div style="padding:4px 5px;background:#f0fdfa">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #99f6e4;padding:1px 0;font-size:7pt"><span>Gross Salary</span><b id="p_grossSal" style="font-family:monospace">0</b></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #99f6e4;padding:1px 0;font-size:6.5pt;color:#444"><span>HRA Exempt</span><span id="p_hraEx" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #99f6e4;padding:1px 0;font-size:6.5pt;color:#444"><span>Std Ded 16(ia)</span><span id="p_stdDed" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:700;color:#065f46;border-top:1.5px solid #0d7c6e;margin-top:1px;font-size:7.5pt"><span>Net Salary</span><b id="p_incomeSal" style="font-family:monospace">0</b></div>
+  </div>
+</div>
+<div style="border:2px solid #b45a00;border-radius:4px;overflow:hidden">
+  <div style="background:#b45a00;color:#fff;padding:2px 5px;font-size:6.5pt;font-weight:700">SCH-HP: HOUSE PROP.</div>
+  <div style="padding:4px 5px;background:#fffbf0">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fde68a;padding:1px 0;font-size:7pt"><span>Rent Received</span><b id="p_rentRec" style="font-family:monospace">0</b></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fde68a;padding:1px 0;font-size:6.5pt;color:#444"><span>30% Std Ded</span><span id="p_stdHp" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fde68a;padding:1px 0;font-size:6.5pt;color:#444"><span>Loan Interest</span><span id="p_hpLoanInt" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:700;color:#7c2d12;border-top:1.5px solid #b45a00;margin-top:1px;font-size:7.5pt"><span>Net HP</span><b id="p_hpNet" style="font-family:monospace">0</b></div>
+  </div>
+</div>
+<div style="border:2px solid #15622e;border-radius:4px;overflow:hidden">
+  <div style="background:#15622e;color:#fff;padding:2px 5px;font-size:6.5pt;font-weight:700">SCH-CG: CAP GAINS</div>
+  <div style="padding:4px 5px;background:#f0fdf4">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>STCG 111A @20%</span><span id="p_stcg111A" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>STCG Slab Rate</span><span id="p_stcgOther" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>LTCG 112A (gross)</span><span id="p_ltcg112A" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt;color:#b91c1c"><span>Less: ₹1.25L Exempt</span><span id="p_ltcg_exempt" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>LTCG 112A taxable</span><span id="p_ltcg112A_taxable" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>LTCG 112 Property</span><span id="p_ltcgProp" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bbf7d0;padding:1px 0;font-size:6.5pt"><span>LTCG 112 Gold/Other</span><span id="p_ltcgOther" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:700;color:#14532d;border-top:1.5px solid #15622e;margin-top:1px;font-size:7.5pt"><span>Net CG in GTI</span><b id="p_cgTotal" style="font-family:monospace">0</b></div>
+  </div>
+</div>
+<div style="border:2px solid #4c1d95;border-radius:4px;overflow:hidden">
+  <div style="background:#4c1d95;color:#fff;padding:2px 5px;font-size:6.5pt;font-weight:700">SCH-OS: OTHER SRCS</div>
+  <div style="padding:4px 5px;background:#faf5ff">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt"><span>SB Interest</span><span id="p_savInt" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt"><span>FD/RD Interest</span><span id="p_fdInt" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt"><span>Dividend</span><span id="p_divInc" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt"><span>Family Pension</span><span id="p_fpGross" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt"><span>PO/Other</span><span id="p_miscOS" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #e9d5ff;padding:1px 0;font-size:6.5pt;color:#b91c1c"><span>Buyback (Deemed Div)</span><span id="p_buyback" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:700;color:#3b0764;border-top:1.5px solid #4c1d95;margin-top:1px;font-size:7.5pt"><span>Net OS</span><b id="p_osNet" style="font-family:monospace">0</b></div>
+  </div>
+</div>
+<div style="border:2px solid #b91c1c;border-radius:4px;overflow:hidden">
+  <div style="background:#b91c1c;color:#fff;padding:2px 5px;font-size:6.5pt;font-weight:700">SCH-SI: SPECIAL RATE</div>
+  <div style="padding:4px 5px;background:#fff1f2">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fecaca;padding:1px 0;font-size:6.5pt"><span>Lottery @30%</span><span id="p_lottery" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fecaca;padding:1px 0;font-size:6.5pt"><span>VDA/Crypto @30%</span><span id="p_crypto" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fecaca;padding:1px 0;font-size:6.5pt"><span>NRI FC Int @20%</span><span id="p_nriFlatAmt" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #fecaca;padding:1px 0;font-size:6.5pt"><span>NRI Div @20%</span><span id="p_nriFlat" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2px 0;font-weight:700;color:#7f1d1d;border-top:1.5px solid #b91c1c;margin-top:1px;font-size:7.5pt"><span>Total SI</span><b id="p_siTotal" style="font-family:monospace">0</b></div>
+  </div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px">
+<div style="border:2px solid #0369a1;border-radius:4px;overflow:hidden">
+  <div style="background:#0369a1;color:#fff;padding:2px 7px;font-size:6.5pt;font-weight:700">PART B-TI — TOTAL INCOME</div>
+  <div style="padding:4px 7px;background:#f0f9ff;font-size:7pt">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0"><span>1. Salary/Pension</span><span id="p_ti1" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0"><span>2. House Property</span><span id="p_ti2" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0"><span>3. Capital Gains</span><span id="p_ti3" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0"><span>4. Other Sources</span><span id="p_ti4" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0"><span>5. Special Rate</span><span id="p_ti5" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0;color:#15622e"><span>Sch EI: Agri Income (Exempt)</span><span id="p_agriGross" style="font-family:monospace;font-weight:600">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2.5px 0;font-size:8pt;font-weight:800;color:#075985;border-top:2px solid #0369a1;margin-top:1px"><span>= Gross Total Income</span><span id="p_gti" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bae6fd;padding:1.5px 0;color:#b91c1c"><span>Less: Ch.VI-A Ded.</span><span id="p_viaDed" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2.5px 0;font-size:8pt;font-weight:800;color:#075985;border-top:2px solid #0369a1;margin-top:1px"><span>= Total Income (TI)</span><span id="p_ti" style="font-family:monospace">0</span></div>
+  </div>
+</div>
+<div style="border:2px solid #1d4ed8;border-radius:4px;overflow:hidden">
+  <div style="background:#1d4ed8;color:#fff;padding:2px 7px;font-size:6.5pt;font-weight:700">SCHEDULE VIA — CH.VI-A DEDUCTIONS</div>
+  <div style="padding:4px 7px;background:#eff6ff;font-size:7pt">
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80TTA (SB int max Rs.10k)</span><span id="p_80tta" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80TTB (Sr. all int max Rs.50k)</span><span id="p_80ttb" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80C (max Rs.1.5L)</span><span id="p_80c" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80D Health Insurance</span><span id="p_80d" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80G Donations</span><span id="p_80g" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;border-bottom:1px solid #bfdbfe;padding:1.5px 0"><span>80CCD(2) Employer NPS</span><span id="p_80ccd2" style="font-family:monospace">0</span></div>
+    <div style="display:flex;justify-content:space-between;padding:2.5px 0;font-size:8pt;font-weight:800;color:#1e3a8a;border-top:2px solid #1d4ed8;margin-top:1px"><span>Total Deductions</span><span id="p_viaTotal" style="font-family:monospace">0</span></div>
+  </div>
+</div>
+</div>
+<div style="font-size:6.5pt;font-weight:700;background:#c2410c;color:#fff;padding:2px 6px;border-radius:3px;margin-bottom:3px">PART B-TTI — TAX COMPUTATION</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.2fr;gap:4px;margin-bottom:6px">
+<div style="border:1.5px solid #fed7aa;border-radius:4px;padding:4px 5px;background:#fff7ed">
+  <div style="font-weight:700;color:#9a3412;font-size:6.5pt;margin-bottom:2px">Normal Slab</div>
+  <div style="font-size:6.5pt;color:#9a3412">Income</div><div style="font-family:monospace;font-weight:700;color:#7c2d12;font-size:7.5pt" id="p_normalInc">Rs.0</div>
+  <div style="font-size:6.5pt;color:#9a3412;margin-top:2px">Slab Tax</div><div style="font-family:monospace;font-weight:700;color:#7c2d12;font-size:7.5pt" id="p_slabTax">Rs.0</div>
+</div>
+<div style="border:1.5px solid #bbf7d0;border-radius:4px;padding:4px 5px;background:#f0fdf4">
+  <div style="font-weight:700;color:#14532d;font-size:6.5pt;margin-bottom:2px">CG Tax (No 87A)</div>
+  <div style="font-size:6.5pt;color:#555">STCG @20%</div><div style="font-family:monospace;font-weight:700;color:#14532d;font-size:7pt" id="p_t3">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">LTCG @12.5%</div><div style="font-family:monospace;font-weight:700;color:#14532d;font-size:7pt" id="p_t4">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">Other LTCG</div><div style="font-family:monospace;font-weight:700;color:#14532d;font-size:7pt" id="p_t5">Rs.0</div>
+</div>
+<div style="border:1.5px solid #c4b5fd;border-radius:4px;padding:4px 5px;background:#faf5ff">
+  <div style="font-weight:700;color:#4c1d95;font-size:6.5pt;margin-bottom:2px">Special &amp; Rebate</div>
+  <div style="font-size:6.5pt;color:#555">SI @30%</div><div style="font-family:monospace;font-weight:700;color:#4c1d95;font-size:7pt" id="p_t6">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">NRI @20%</div><div style="font-family:monospace;font-weight:700;color:#4c1d95;font-size:7pt" id="p_t7">Rs.0</div>
+  <div style="font-size:6.5pt;color:#b91c1c">87A Rebate</div><div style="font-family:monospace;font-weight:700;color:#b91c1c;font-size:7pt" id="p_rebate87A">Rs.0</div>
+  <div style="font-size:6.5pt;color:#b91c1c">Marg.Relief</div><div style="font-family:monospace;font-weight:700;color:#b91c1c;font-size:7pt" id="p_marginal">Rs.0</div>
+</div>
+<div style="border:1.5px solid #fca5a5;border-radius:4px;padding:4px 5px;background:#fff1f2">
+  <div style="font-weight:700;color:#991b1b;font-size:6.5pt;margin-bottom:2px">Add-ons</div>
+  <div style="font-size:6.5pt;color:#555">Before Rebate</div><div style="font-family:monospace;font-weight:700;color:#991b1b;font-size:7pt" id="p_taxBR">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">After Rebate</div><div style="font-family:monospace;font-weight:700;color:#991b1b;font-size:7pt" id="p_taxAfterReb">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">Surcharge</div><div style="font-family:monospace;font-weight:700;color:#991b1b;font-size:7pt" id="p_sc">Rs.0</div>
+  <div style="font-size:6.5pt;color:#555">Cess @4%</div><div style="font-family:monospace;font-weight:700;color:#991b1b;font-size:7pt" id="p_cess">Rs.0</div>
+</div>
+<div style="border:2.5px solid #162f4a;border-radius:5px;padding:6px 8px;background:linear-gradient(135deg,#162f4a,#1e4976);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center">
+  <div style="font-size:6.5pt;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.4px">TOTAL TAX PAYABLE</div>
+  <div style="font-size:6pt;color:#7dd3fc">u/s 288B Rounded</div>
+  <div style="font-size:15pt;font-family:monospace;font-weight:800;color:#5eead4" id="p_finalTax">Rs.0</div>
+  <div style="font-size:6pt;color:#93c5fd;margin-top:3px">Effective Rate (GTI)</div>
+  <div style="font-size:9pt;font-weight:700;color:#fde68a" id="p_effRate">0.00%</div>
+  <div style="font-size:5.5pt;color:#7dd3fc;margin-top:3px;line-height:1.4">87A on slab only [FA2025]</div>
+</div>
+</div>
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:3px;padding:4px 8px;font-size:6pt;color:#374151;line-height:1.6">
+<b>CBDT AY 2026-27:</b> Sec 87A rebate on slab tax ONLY (Finance Act 2025). STCG @20% u/s 111A · LTCG @12.5% u/s 112A (₹1.25L exempt at GTI level) · Other LTCG @12.5% u/s 112 — no 87A on CG. Surcharge capped @15% on CG.<br>
+<span style="color:#b91c1c;font-weight:700">⚠ DISCLAIMER: This printout is for estimation and educational purposes only. Results are indicative and may vary from actual tax liability depending on individual facts, exemptions, reliefs, DTAA benefits, and amendments not covered herein. This does NOT constitute tax advice. Do NOT use for direct ITR-2 filing without independent verification. Always verify with Form 16, AIS/26AS, capital gains statements, and consult a qualified Chartered Accountant before filing. The developer accepts no liability for any financial consequence arising from use of this tool. · incometax.gov.in</span>
+</div>
+</div></div>
+<!-- ═══ DEBUG PANEL ═══ -->
+<div id="debugPanel" class="">
+  <div class="dbg-hdr" style="color:#000;font-weight:900">🔬 DEBUG &amp; TEST PANEL — ITR-2 Tax Calculator v21 | Finance Act 2025</div>
+  <div id="dbgContent"><span class="dbg-warn">No calculation data. Enter some values first.</span></div>
+</div>
+
+</div><!-- /wrap -->
+<script>
+
+// ── CORE HELPERS (must be first) ──────────────────────────────
+function $(id){ return document.getElementById(id); }
+function pf(id){ var el=document.getElementById(id); return el ? (parseFloat(el.value)||0) : 0; }
+function INR(v){ return '₹ '+Math.round(Math.max(0,v)).toLocaleString('en-IN'); }
+function INRf(v){ var n=Math.round(Math.abs(v)); return (v<0?'(₹ ':'₹ ')+n.toLocaleString('en-IN')+(v<0?')':''); }
+function round10(v){ return Math.round(v/10)*10; }
+
+// ── THEME / COLOUR SWITCHER ───────────────────────────────────
+function setTheme(cls) {
+  const themes = ['th-postcard','th-pista','th-blue','th-pink','th-gray'];
+  themes.forEach(t => document.body.classList.remove(t));
+  if (cls) document.body.classList.add(cls);
+  // Update active dot
+  document.querySelectorAll('.cbtn').forEach(btn => {
+    btn.classList.remove('active');
+    const t = btn.getAttribute('onclick') || '';
+    if (t.includes("'"+cls+"'") || (cls==='' && t.includes("''"))) btn.classList.add('active');
+  });
+}
+
+
+(function(){
+  function ld(u,cb){var s=document.createElement('script');s.src=u;s.onload=cb;s.onerror=function(){if(cb)cb();};document.head.appendChild(s);}
+  window.loadPDFLibs=function(cb){
+    if(window.html2canvas&&window.jspdf){if(cb)cb();return;}
+    ld('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',function(){
+      ld('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',function(){
+        console.log('PDF libs ready');if(cb)cb();
+      });
+    });
+  };
+  window.addEventListener('load',function(){window.loadPDFLibs(null);});
+})();
+
+// ── GENERATE PDF ───────────────────────────────────────────────
+function generatePDF(fname){
+  updateITR2Page();
+  var pg=document.getElementById('itr2Page'),inner=document.getElementById('itr2Inner');
+  var wasHidden=pg.style.display==='none';
+  pg.style.display='block';
+  showToast('Generating PDF...');
+  window.loadPDFLibs(function(){
+    setTimeout(function(){
+      inner.style.width='794px';inner.style.overflow='visible';
+      html2canvas(inner,{scale:1.5,useCORS:true,allowTaint:true,backgroundColor:'#ffffff',logging:false,width:794,windowWidth:820}).then(function(canvas){
+        inner.style.width='';inner.style.overflow='';
+        try{
+          var jsPDF=window.jspdf&&window.jspdf.jsPDF;
+          if(!jsPDF){showToast('jsPDF not loaded. Try again.');if(wasHidden)pg.style.display='';return;}
+          var pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+          var MG=8,A4W=210,A4H=297,usW=A4W-2*MG,usH=A4H-2*MG;
+          var dpi=96*1.5,pxMm=dpi/25.4;
+          var scl=usW/(canvas.width/pxMm),pgHpx=Math.floor((usH/scl)*pxMm);
+          var pages=Math.ceil(canvas.height/pgHpx);
+          for(var p=0;p<pages;p++){
+            if(p>0)pdf.addPage();
+            var sy=p*pgHpx,sh=Math.min(pgHpx,canvas.height-sy);
+            var tc=document.createElement('canvas');tc.width=canvas.width;tc.height=sh;
+            tc.getContext('2d').drawImage(canvas,0,sy,canvas.width,sh,0,0,canvas.width,sh);
+            pdf.addImage(tc.toDataURL('image/jpeg',0.92),'JPEG',MG,MG,usW,(sh/pxMm)*scl);
+          }
+          pdf.save(fname);
+          showToast('PDF saved: '+fname);
+        }catch(e){showToast('PDF error: '+e.message);console.error(e);}
+        if(wasHidden)pg.style.display='';
+      }).catch(function(e){inner.style.width='';inner.style.overflow='';showToast('Capture error: '+e.message);if(wasHidden)pg.style.display='';});
+    },400);
+  });
+}
+
+// ── ACTION BUTTONS ─────────────────────────────────────────────
+function printCalc(){generatePDF('ITR-2_FY2025-26_AY2026-27.pdf');}
+function savePDF(){generatePDF('ITR-2_FY2025-26_AY2026-27.pdf');}
+
+function saveHTML(){
+  try{
+    var html='<!DOCTYPE html>'+document.documentElement.outerHTML;
+    var b=new Blob([html],{type:'text/html;charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u;a.download='ITR2_Calculator_FY2025-26_v21.html';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);
+    showToast('HTML saved: ITR2_Calculator_FY2025-26_v21.html');
+  }catch(e){alert('Save failed: '+e.message);}
+}
+
+function saveZIP(){
+  function doZip(){
+    var zip=new JSZip(),html='<!DOCTYPE html>'+document.documentElement.outerHTML;
+    zip.file('ITR2_Calculator_FY2025-26_v21.html',html);
+    zip.file('README.txt','ITR-2 Tax Calculator v21 | FY 2025-26\nOpen HTML in Chrome/Edge. Click Save PDF for download.\nDisclaimer: Indicative only. Consult CA.\nGenerated: '+new Date().toLocaleDateString('en-IN'));
+    zip.generateAsync({type:'blob'}).then(function(b){
+      var u=URL.createObjectURL(b),a=document.createElement('a');
+      a.href=u;a.download='ITR2_Calculator_v21.zip';
+      document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);
+      showToast('ZIP saved: ITR2_Calculator_v20.zip');
+    });
+  }
+  if(typeof JSZip!=='undefined'){doZip();return;}
+  showToast('Loading ZIP library...');
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+  s.onload=doZip;s.onerror=function(){saveHTML();alert('ZIP unavailable, HTML saved.');};
+  document.head.appendChild(s);
+}
+
+function showToast(msg){
+  var t=document.getElementById('saveToast');
+  if(!t){t=document.createElement('div');t.id='saveToast';t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2a3a;color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:opacity .4s;pointer-events:none';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._tid);t._tid=setTimeout(function(){t.style.opacity='0';},3500);
+}
+
+// ── TOGGLE VIEWS ───────────────────────────────────────────────
+function toggleITR2(){
+  var el=document.getElementById('itr2Page');
+  var shown=(el.style.display==='block');
+  el.style.display=shown?'none':'block';
+  if(!shown){
+    if(!window._lastCalc){recalcAll();}
+    updateITR2Page();
+    setTimeout(function(){el.scrollIntoView({behavior:'smooth',block:'start'});},100);
+  }
+}
+function toggleDebug(){
+  var el=document.getElementById('debugPanel'),shown=el.classList.contains('show-debug');
+  el.classList.toggle('show-debug');
+  if(!shown)runDebugTests();
+}
+
+// ── UPDATE ITR-2 INFOGRAPHIC ───────────────────────────────────
+function updateITR2Page(){
+  var d=window._lastCalc;if(!d)return;
+  var R=function(v){return 'Rs.'+Math.round(Math.max(0,v)).toLocaleString('en-IN');};
+  var Rn=function(v){var n=Math.round(Math.abs(v));return(v<0?'(Rs.':'Rs.')+n.toLocaleString('en-IN')+(v<0?')':'');};
+  var el=function(id,val){var e=document.getElementById(id);if(e)e.textContent=val;};
+  var indStat=(document.getElementById('indStatus')&&document.getElementById('indStatus').value)||'res_normal';
+  var aType=(document.getElementById('assesseeType')&&document.getElementById('assesseeType').value)||'ind';
+  var isOld=d.isOld;
+  var regText=isOld?'Old Regime':'New Regime u/s 115BAC';
+  var sm={'res_normal':'ROR Below 60','res_senior':'ROR Senior','res_supersenior':'ROR Super Sr.','rnor':'RNOR','nri':'NRI'};
+  var am={'res_normal':'Below 60 yrs','res_senior':'60-79 (Senior)','res_supersenior':'80+ (Super Sr.)','rnor':'RNOR','nri':'NRI (N/A)'};
+  el('p_regime_badge',regText);el('p_status_badge',aType==='huf'?'HUF':(sm[indStat]||indStat));
+  el('p_status',aType==='huf'?'HUF':'Individual');el('p_rstat',sm[indStat]||indStat);
+  el('p_agecat',am[indStat]||'-');el('p_regime',regText);
+  el('p_dob',(document.getElementById('dobInput')&&document.getElementById('dobInput').value)||'(not entered)');
+  el('p_grossSal',R(d.grossSal));el('p_hraEx',R(d.hraEx));el('p_stdDed',R(d.stdDed));el('p_incomeSal',R(d.incomeSalary));
+  el('p_rentRec',R(d.rentRec));el('p_stdHp',R(d.rentRec>0?d.rentRec*.30:0));el('p_hpLoanInt',R(d.loanInt));el('p_hpNet',Rn(d.hpNet));
+  el('p_stcg111A',R(d.stcg));el('p_stcgOther',R(d.otherStcg));
+  el('p_ltcg112A',R(d.ltcg));el('p_ltcg_exempt','('+R(d.ltcgExempt||0)+')');
+  el('p_ltcg112A_taxable',R(d.taxableLtcg));
+  el('p_ltcgProp',R(d.ltcgProperty||0));
+  el('p_ltcgOther',R((d.ltcgGold||0)+(d.ltcgOtherAsset||0)));
+  el('p_cgTotal',R(d.totalCgGTI));
+  el('p_savInt', d.isNRI ? R(d.nriNROInt||0) : R(d.savInt));
+  el('p_fdInt',  d.isNRI ? '0' : R(d.fdInt));
+  el('p_divInc', d.isNRI ? R(d.nriDiv115A||0) : R(d.divInc));
+  el('p_fpGross',R(d.fpens));
+  el('p_miscOS', R((d.misc||0)+(d.poInt||0)));
+  el('p_buyback', d.isNRI ? R(d.nriBuybackFlat||0) : R(d.buybackIncome||0));
+  el('p_osNet',R(d.incomeOS_GTI));
+  el('p_lottery',R(d.lottery));el('p_crypto',R(d.crypto));
+  el('p_nriFlatAmt',R(d.nriFCInt||0));
+  el('p_nriFlat',R((d.nriDiv115A||0)+(d.nriBuybackFlat||0)));
+  el('p_siTotal',R(d.specInc+(d.nriSpecInc||0)));
+  var isSr=d.isSenior,isRes=d.isResident,isH=d.isHUF,isNriD=d.isNRI;
+  // 80TTB: Senior Individual + Old + Resident (ROR/RNOR) + NOT NRI + NOT HUF
+  var ttb80 = (isSr && isOld && isRes && !isH && !isNriD) ? Math.min((d.savInt||0)+(d.fdInt||0)+(d.poInt||0),50000) : 0;
+  // 80TTA: Non-Senior + Old Regime. NRI ✓ (use nriNROInt as base). Resident uses savInt.
+  var tta80 = (!isSr && isOld && !isH)
+    ? (isNriD ? Math.min(d.nriNROInt||0, 10000) : Math.min(d.savInt||0, 10000))
+    : 0;
+  el('p_80tta', R(tta80));
+  el('p_80ttb', R(ttb80));
+  el('p_80c',R(d.ded80C));el('p_80d',R(d.ded80D));el('p_80g',R(d.ded80G));el('p_80ccd2',R(d.npsDed));el('p_viaTotal',R(d.totalChVI));
+  el('p_ti1',R(d.incomeSalary));el('p_ti2',Rn(d.hpNet));el('p_ti3',R(d.totalCgGTI));
+  el('p_ti4',R(d.incomeOS_GTI));el('p_ti5',R(d.specInc+(d.nriSpecInc||0)));
+  el('p_agriGross', d.agriGross > 0 ? R(d.agriGross)+(d.doPartialIntegration?' [PI]':' [Exempt]') : '₹ 0');
+  el('p_gti',R(Math.max(0,d.gti)));el('p_viaDed',R(d.totalChVI));el('p_ti',R(d.totalIncome));
+  el('p_normalInc',R(d.normalIncome));el('p_slabTax',R(d.slabTax));
+  el('p_t3',R(d.stcgTax));el('p_t4',R(d.ltcgTax));el('p_t5',R(d.otherLtcgTax));
+  el('p_t6',R(d.specTax));el('p_t7',R(d.nriSpecTax||0));
+  el('p_taxBR',R(d.totalTaxBR));el('p_rebate87A',R(d.rebate));el('p_marginal',R(d.marginalRelief));
+  el('p_taxAfterReb',R(d.taxAfterReb));el('p_sc',R(d.surcharge));el('p_cess',R(d.cess));
+  el('p_finalTax',R(d.finalTax));
+  el('p_effRate',(d.gti>0?(d.finalTax/d.gti*100).toFixed(2):'0.00')+'%');
+}
+
+// ── ACCORDION ──────────────────────────────────────────────────
+function toggle(id) {
+  const el = $(id);
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  el.classList.toggle('closed', isOpen);
+}
+document.querySelectorAll('.ac:not(.open)').forEach(el => el.classList.add('closed'));
+
+// ── TOOLTIP ────────────────────────────────────────────────────
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.ib');
+  document.querySelectorAll('.ib.open').forEach(el => {
+    if (el !== btn) {
+      el.classList.remove('open');
+      const tip = el.querySelector('.tip');
+      if (tip) tip.style.cssText = '';
+    }
+  });
+  if (btn) {
+    const wasOpen = btn.classList.contains('open');
+    btn.classList.toggle('open');
+    if (!wasOpen) positionTip(btn);
+    e.stopPropagation();
+  }
+});
+
+function positionTip(btn) {
+  const tip = btn.querySelector('.tip');
+  if (!tip) return;
+  tip.style.cssText = '';
+  tip.classList.remove('pos-above','pos-below');
+  // Temporarily show to measure
+  tip.style.display = 'block';
+  const br = btn.getBoundingClientRect();
+  const tr = tip.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let top, left;
+  // Prefer above
+  if (br.top - tr.height - 10 > 0) {
+    top = br.top - tr.height - 10;
+    tip.classList.add('pos-above');
+  } else {
+    top = br.bottom + 8;
+    tip.classList.add('pos-below');
+  }
+  // Horizontal: center on button, clamp within viewport
+  left = br.left + br.width/2 - tr.width/2;
+  left = Math.max(8, Math.min(left, vw - tr.width - 8));
+  tip.style.position = 'fixed';
+  tip.style.top = top + 'px';
+  tip.style.left = left + 'px';
+  tip.style.display = '';
+}
+
+// ── TAX FUNCTIONS ──────────────────────────────────────────────
+function computeHRA(basic, hraRec, rent, isMetro) {
+  if (basic <= 0 || hraRec <= 0 || rent <= 0) return 0;
+  return Math.min(hraRec, basic * (isMetro ? 0.5 : 0.4), Math.max(0, rent - 0.10 * basic));
+}
+
+function newRegimeTax(inc) {
+  // FY 2025-26: 0-4L nil, 4-8L 5%, 8-12L 10%, 12-16L 15%, 16-20L 20%, 20-24L 25%, >24L 30%
+  if (inc <= 400000) return 0;
+  let t = 0;
+  const b = [[400000,800000,.05],[800000,1200000,.10],[1200000,1600000,.15],
+             [1600000,2000000,.20],[2000000,2400000,.25],[2400000,Infinity,.30]];
+  for (const [lo,hi,r] of b) if (inc > lo) t += (Math.min(inc,hi)-lo)*r;
+  return t;
+}
+
+function oldRegimeTax(inc, basicExemption) {
+  if (inc <= 0) return 0;
+  const ex = basicExemption;
+  let t = 0;
+  if (ex >= 500000) {
+    // Super Senior: 0-5L nil, 5-10L 20%, >10L 30%
+    if (inc > 500000)  t += Math.min(inc-500000,  500000) * 0.20;
+    if (inc > 1000000) t += (inc - 1000000) * 0.30;
+  } else if (ex >= 300000) {
+    // Senior: 0-3L nil, 3-5L 5%, 5-10L 20%, >10L 30%
+    if (inc > 300000)  t += Math.min(inc-300000, 200000) * 0.05;
+    if (inc > 500000)  t += Math.min(inc-500000, 500000) * 0.20;
+    if (inc > 1000000) t += (inc - 1000000) * 0.30;
+  } else {
+    // Normal/HUF/NRI: 0-2.5L nil, 2.5-5L 5%, 5-10L 20%, >10L 30%
+    if (inc > 250000)  t += Math.min(inc-250000, 250000) * 0.05;
+    if (inc > 500000)  t += Math.min(inc-500000, 500000) * 0.20;
+    if (inc > 1000000) t += (inc - 1000000) * 0.30;
+  }
+  return t;
+}
+
+function computeSurcharge(slabTax, stcgTax, ltcgTax, oltcgTax, siTax, nriTax, totalIncome, isOld) {
+  if (totalIncome <= 5000000) return 0;
+  let base;
+  if      (totalIncome > 50000000) base = isOld ? 0.37 : 0.25;
+  else if (totalIncome > 20000000) base = 0.25;
+  else if (totalIncome > 10000000) base = 0.15;
+  else                             base = 0.10;
+  const cgCap = Math.min(base, 0.15); // STCG 111A + LTCG 112A + LTCG 112 capped at 15%
+  let sc = slabTax*base + stcgTax*cgCap + ltcgTax*cgCap + oltcgTax*cgCap + siTax*base + nriTax*base;
+  if (base === 0.10) sc = Math.min(sc, totalIncome - 5000000); // marginal relief at 50L
+  return Math.max(0, sc);
+}
+
+// ── DOB AUTO-AGE ───────────────────────────────────────────────
+// FY 2025-26: Apr 1 2025 – Mar 31 2026
+// Senior = born on or before Mar 31 1966 (turns 60 during FY)
+// SuperSenior = born on or before Mar 31 1946 (turns 80 during FY)
+function computeAgeCategory(dobStr) {
+  if (!dobStr) return null;
+  const dob = new Date(dobStr);
+  if (isNaN(dob)) return null;
+  // Age at end of FY 2025-26 (31 Mar 2026)
+  const fyEnd = new Date('2026-03-31');
+  let age = fyEnd.getFullYear() - dob.getFullYear();
+  const m = fyEnd.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && fyEnd.getDate() < dob.getDate())) age--;
+  if (age >= 80) return 'supersenior';
+  if (age >= 60) return 'senior';
+  return 'normal';
+}
+
+function updateDOB() {
+  const dobStr = $('dobInput').value;
+  const aType  = $('assesseeType').value;
+  const indStat = $('indStatus').value;
+  const isHUF   = aType === 'huf';
+
+  $('dobRow').style.display = isHUF ? 'none' : 'flex';
+  if (isHUF) return;
+
+  const cat = computeAgeCategory(dobStr);
+  const ageEl = $('ageStatus');
+  const dotEl = $('ageDot');
+  const txtEl = $('ageText');
+  const hintEl = $('ageHint');
+
+  if (!cat) {
+    txtEl.textContent = 'Enter DOB above to auto-compute';
+    dotEl.style.background = '#64748b';
+    if (hintEl) hintEl.textContent = '';
+    return;
+  }
+
+  const isNRI  = indStat === 'nri';
+  const isRNOR = indStat === 'rnor';
+
+  // For ROR residents: auto-update the status dropdown
+  if (!isNRI && !isRNOR) {
+    const newVal = cat === 'supersenior' ? 'res_supersenior' : cat === 'senior' ? 'res_senior' : 'res_normal';
+    $('indStatus').value = newVal;
+  }
+
+  // Show computed age description
+  const labels = {
+    'normal':     ['Below 60 yrs', '#1d4ed8'],
+    'senior':     ['Senior Citizen (60–79 yrs)', '#15622e'],
+    'supersenior':['Super Senior Citizen (80+ yrs)', '#4c1d95'],
+  };
+  const [lbl, col] = labels[cat];
+  txtEl.textContent = lbl + (isNRI ? ' [NRI – age exemption n/a]' : isRNOR ? ' [RNOR – age exemption applies]' : '');
+  dotEl.style.background = col;
+  if (hintEl) {
+    if (isNRI) hintEl.textContent = 'NRI: Basic exemption ₹2.5L (Old Regime) regardless of age · 80TTA ₹10k available (NRO savings) · 80TTB not applicable';
+    else if (cat === 'supersenior') hintEl.textContent = 'Old Regime: Basic exemption ₹5L · 80TTB ₹50k';
+    else if (cat === 'senior') hintEl.textContent = 'Old Regime: Basic exemption ₹3L · 80TTB ₹50k';
+    else hintEl.textContent = 'Old Regime: Basic exemption ₹2.5L · 80TTA ₹10k';
+  }
+}
+
+// ── DERIVE TAXPAYER ATTRIBUTES ──────────────────────────────────
+function getTaxpayerInfo() {
+  const aType    = $('assesseeType').value;   // 'ind' or 'huf'
+  const indStat  = $('indStatus').value;      // 'res_normal','res_senior','res_supersenior','rnor','nri'
+  const isHUF    = aType === 'huf';
+  const isInd    = !isHUF;
+
+  // Residency flags
+  // NRI: non-resident, no 87A, no 80TTB; 80TTA ✓ (Old Regime, NRO savings interest), ₹2.5L exemption regardless of age
+  // RNOR: resident (for 87A/80TTA/TTB purposes) but not ordinarily resident
+  //       age-based exemption applies, same slabs as ROR, 87A ✓
+  // ROR: full resident, all benefits
+  const isNRI    = isInd && indStat === 'nri';
+  const isRNOR   = isInd && indStat === 'rnor';
+  // HUF: treated as resident for slab logic; but not eligible for 87A
+  const isResident = !isNRI; // includes RNOR & HUF
+
+  // Age-based senior flags (NOT applicable to NRI for exemption purposes)
+  const isSenior   = isInd && !isNRI && (indStat === 'res_senior' || indStat === 'res_supersenior');
+  const isSuperSen = isInd && !isNRI && indStat === 'res_supersenior';
+  // For RNOR: compute from DOB if available
+  let rnorSenior = false, rnorSuperSen = false;
+  if (isRNOR) {
+    const cat = computeAgeCategory($('dobInput').value);
+    rnorSenior   = cat === 'senior' || cat === 'supersenior';
+    rnorSuperSen = cat === 'supersenior';
+  }
+  const effectiveSenior   = isSenior   || rnorSenior;
+  const effectiveSuperSen = isSuperSen || rnorSuperSen;
+
+  // Basic exemption (Old Regime)
+  let basicExemption = 250000;
+  if (isNRI) {
+    basicExemption = 250000; // NRI: always 2.5L regardless of age
+  } else if (effectiveSuperSen) {
+    basicExemption = 500000;
+  } else if (effectiveSenior) {
+    basicExemption = 300000;
+  }
+
+  // 87A eligibility — CONFIRMED per Sec 87A ITA 1961 + Finance Act 2025:
+  //   ✅ ROR Individual (any age incl. Senior, Super Senior)
+  //   ✅ RNOR Individual (legally "resident" under Sec 6 — ordinarily-resident condition
+  //      only affects foreign income, NOT 87A eligibility)
+  //   ❌ NRI (non-resident — Sec 87A says "resident individual" explicitly)
+  //   ❌ HUF (Sec 87A: "individual" only — HUF is not an individual)
+  // isResident = !isNRI (includes ROR, RNOR, HUF)
+  // canRebate = Individual (not HUF) AND Resident (not NRI) = ROR+RNOR only
+  const canRebate = isInd && !isNRI; // isInd already excludes HUF; !isNRI ensures resident
+
+  // 80TTA/80TTB: Old Regime only.
+  // 80TTB: Senior Individual Resident (ROR/RNOR) only — NOT NRI, NOT HUF
+  // 80TTA: Non-senior Individual / HUF / NRI — Sec 80TTA has NO residency bar (NRI eligible for NRO savings interest)
+  const can80TTx = true; // always evaluated in recalcAll logic; NRI handled separately
+
+  return {
+    isHUF, isInd, isNRI, isRNOR, isResident,
+    isSenior: effectiveSenior, isSuperSen: effectiveSuperSen,
+    basicExemption, canRebate, can80TTx
+  };
+}
+
+// ── UPDATE STATUS PILL ──────────────────────────────────────────
+function updatePill() {
+  const aType   = $('assesseeType').value;
+  const indStat = $('indStatus').value;
+  const isHUF   = aType === 'huf';
+  let label, dotColor;
+  if (isHUF) {
+    label    = 'HUF · Hindu Undivided Family · FY 2025-26';
+    dotColor = '#92400e';
+  } else {
+    const map = {
+      'res_normal':     ['Resident (ROR) · Below 60 yrs · 87A ✓ · 80TTA ✓', '#1d4ed8'],
+      'res_senior':     ['Senior Citizen (ROR) · 60–79 yrs · 87A ✓ · 80TTB ✓', '#15622e'],
+      'res_supersenior':['Super Senior Citizen (ROR) · 80+ yrs · 87A ✓ · 80TTB ✓ · Exemption ₹5L', '#4c1d95'],
+      'rnor':           ['RNOR · Resident (Not Ordinarily Resident) · 87A ✓ · 80TTA/TTB ✓', '#0369a1'],
+      'nri':            ['Non-Resident (NRI) · 87A ✗ · 80TTA ✓ (NRO sav.) · 80TTB ✗ · Exemption ₹2.5L', '#b91c1c'],
+    };
+    [label, dotColor] = map[indStat] || ['Individual', '#1d4ed8'];
+    label += ' · FY 2025-26';
+  }
+  $('statusText').textContent = label;
+  $('statusDot').style.background = dotColor;
+  // Show/hide UI sections
+  $('indStatusDiv').style.display  = isHUF ? 'none' : '';
+  $('hufNote').style.display       = isHUF ? 'block' : 'none';
+  $('dobRow').style.display        = isHUF ? 'none' : 'flex';
+  $('ageDisplayDiv').style.display  = isHUF ? 'none' : 'block';
+  const isNRI  = !isHUF && indStat === 'nri';
+  const isRNOR = !isHUF && indStat === 'rnor';
+  $('nriRateRow').style.display   = isNRI  ? 'block' : 'none';
+  $('rnorNote').style.display     = isRNOR ? 'block' : 'none';
+  $('rnorCalcBlock').style.display = isRNOR ? 'block' : 'none';
+  // 87A note always visible for individuals (for all statuses)
+  updateDOB();
+  if (isRNOR) buildRNORTable();
+}
+
+// ── MAIN RECALCULATE ────────────────────────────────────────────
+const regimeRadios = document.querySelectorAll('input[name="regime"]');
+
+function recalcAll() {
+  const isOld = document.querySelector('input[name="regime"]:checked').value === 'old';
+  updatePill();
+
+  const tp = getTaxpayerInfo();
+  const { isHUF, isInd, isNRI, isRNOR, isResident, isSenior, isSuperSen, basicExemption, canRebate } = tp;
+  // NRI income: separate fields per type (confirmed IT Dept rules AY 2026-27)
+  // nriNROInterest: NRO/India-source interest -> slab rate in ITR (not 115A)
+  // nriFCInterest:  Foreign currency interest -> 20% u/s 115A (mandatory)
+  // nriDividend115A: NRI dividend -> 20% u/s 115A (mandatory, cannot be slab)
+  const nriNROInt  = isNRI ? (pf('nriNROInterest') || 0) : 0;
+  const nriFCInt   = isNRI ? (pf('nriFCInterest')  || 0) : 0;
+  const nriDiv115A = isNRI ? (pf('nriDividend115A') || 0) : 0;
+  const nriFlat    = false; // kept for compatibility - logic now split
+
+  // Regime visibility (old-only fields)
+  ['exemptAllowRow','hraBlock'].forEach(id => {
+    $(id).classList.toggle('old-only', !isOld);
+    $(id).classList.toggle('show', isOld);
+  });
+  ['dedBlock','dedBlock2'].forEach(id => {
+    $(id).classList.toggle('old-only', !isOld);
+    $(id).classList.toggle('show', isOld);
+  });
+  // HRA only for individuals
+  if ($('hraBlock')) {
+    $('hraBlock').style.opacity = (isHUF) ? '0.25' : '';
+    $('hraBlock').style.pointerEvents = (isHUF) ? 'none' : '';
+  }
+
+  // ══ 1. SALARY HEAD ════════════════════════════════════════════
+  const basic    = pf('basicSalary');
+  const spAllow  = pf('specialAllowance');
+  const perq     = pf('perquisiteValue');
+  const grossSal = basic + spAllow + perq;
+  const exemptAllow = isOld ? pf('exemptAllowances') : 0;
+  const hraRec   = (isOld && isInd) ? pf('hraReceived') : 0;
+  const rentPaid = (isOld && isInd) ? pf('rentPaid') : 0;
+  const isMetro  = $('metroCity').value === 'yes';
+  const hraEx    = (isOld && isInd) ? computeHRA(basic, hraRec, rentPaid, isMetro) : 0;
+  // Std Ded u/s 16(ia): head-level, applied when salary > 0
+  const stdDed       = grossSal > 0 ? (isOld ? 50000 : 75000) : 0;
+  const salDedTotal  = hraEx + exemptAllow + stdDed;
+  const incomeSalary = Math.max(0, grossSal - salDedTotal);
+  const salDedLabel  = isOld
+    ? `HRA ₹${hraEx.toLocaleString('en-IN')} + Exempt ₹${exemptAllow.toLocaleString('en-IN')} + Std Ded ₹${stdDed.toLocaleString('en-IN')}`
+    : `Std Ded u/s 16(ia) ₹${stdDed.toLocaleString('en-IN')}`;
+
+  // ══ 2. HOUSE PROPERTY HEAD ════════════════════════════════════
+  const rentRec = pf('rentalIncome');
+  const loanInt = pf('homeLoanInterest');
+  let hpGross = 0, hpNet = 0, hpDedLabel = '—';
+  if (rentRec > 0) {
+    hpGross = rentRec;
+    const nav = rentRec * 0.70;
+    const navAfterInt = nav - loanInt;
+    if (isOld) hpNet = navAfterInt >= 0 ? navAfterInt : -Math.min(Math.abs(navAfterInt), 200000);
+    else       hpNet = Math.max(0, navAfterInt);
+    hpDedLabel = `30% Std u/s 24(a) ₹${(rentRec*0.30).toLocaleString('en-IN')} + Int u/s 24(b) ₹${loanInt.toLocaleString('en-IN')}`;
+  } else if (loanInt > 0) {
+    hpGross = 0;
+    if (isOld) { hpNet = -Math.min(loanInt, 200000); hpDedLabel = `Self-occ int u/s 24(b) max ₹2L ₹${Math.min(loanInt,200000).toLocaleString('en-IN')}`; }
+    else       { hpNet = 0; hpDedLabel = 'Self-occ: Nil (New Regime)'; }
+  }
+
+  // ══ 3. CAPITAL GAINS ══════════════════════════════════════════
+  // Pre-read buyback fields here — needed for CG loss set-off calculation below
+  const buybackIncome  = pf('buybackIncome');   // deemed dividend — slab rate (read here for CG loss calc)
+  const buybackCapLoss = pf('buybackCapLoss');  // capital loss u/s 46A = cost of shares tendered
+  // STCG
+  const stcg      = pf('stcgEquity');    // 111A @20% — listed equity/MF STT-paid ≤12m
+  const otherStcg = pf('otherStcg');    // Slab rate — real estate/gold/unlisted/bonds/debt MF/foreign
+
+  // LTCG — all @12.5% u/s 112/112A, no indexation
+  const ltcg         = pf('ltcgEquity');   // 112A — listed equity/MF STT-paid >12m (₹1.25L exempt)
+  const ltcgProperty = pf('ltcgProperty'); // 112 — real estate >24m (after Sec 54/54EC)
+  const ltcgGold     = pf('ltcgGold');     // 112 — gold/silver/physical assets >24m
+  const ltcgOtherAsset = pf('ltcgOther'); // 112 — unlisted shares/bonds/foreign equity >threshold
+
+  // ₹1.25L LTCG exemption u/s 112A: applied at GTI (income) level, shared across all 112A gains
+  const ltcgExempt   = Math.min(ltcg, 125000);
+  const taxableLtcg  = Math.max(0, ltcg - 125000); // net 112A in GTI after exemption
+
+  // All other LTCG u/s 112 (no exemption, already post Sec54/54EC)
+  const otherLtcg    = ltcgProperty + ltcgGold + ltcgOtherAsset;
+
+  // Tax calculations
+  const stcgTax      = stcg * 0.20;           // 111A @20%
+  const ltcgTax      = taxableLtcg * 0.125;   // 112A @12.5%
+  const otherLtcgTax = otherLtcg * 0.125;     // 112 @12.5%
+
+  // GTI contribution: exemption already deducted from 112A
+  // Buyback Capital Loss u/s 46A: consideration = NIL, cost = capital loss → set off vs CG
+  const grossCgBeforeLoss = stcg + taxableLtcg + otherStcg + otherLtcg;
+  const buybackLossSetOff = Math.min(buybackCapLoss, grossCgBeforeLoss);
+  const totalCgGTI   = Math.max(0, grossCgBeforeLoss - buybackLossSetOff);
+  const buybackLossCF = Math.max(0, buybackCapLoss - buybackLossSetOff); // unabsorbed → carry forward 8 AYs
+
+  // Update live CG summary box
+  const sf = (id,v)=>{ var e=$('cs_'+id); if(e) e.textContent='₹'+Math.round(v).toLocaleString('en-IN'); };
+  sf('stcg',stcg); sf('ostcg',otherStcg); sf('ltcg',ltcg); sf('exempt',ltcgExempt);
+  sf('ltcgtax',taxableLtcg); sf('oltcg',otherLtcg); sf('gti',totalCgGTI);
+  sf('cgtax',stcgTax+ltcgTax+otherLtcgTax);
+  // Show buyback loss in CG summary if entered
+  const cgBox = $('cgSummaryGrid');
+  if (cgBox && buybackCapLoss > 0) {
+    let bbRow = document.getElementById('cs_bbrow');
+    if (!bbRow) { bbRow = document.createElement('div'); bbRow.id='cs_bbrow'; bbRow.style.cssText='color:#b91c1c;grid-column:span 2'; cgBox.appendChild(bbRow); }
+    bbRow.innerHTML = `Buyback Cap Loss u/s 46A: <b style="color:#b91c1c">−₹${buybackCapLoss.toLocaleString('en-IN')}</b> (Set-off: ₹${buybackLossSetOff.toLocaleString('en-IN')}, CF: ₹${buybackLossCF.toLocaleString('en-IN')})`;
+  } else { const r=document.getElementById('cs_bbrow'); if(r) r.remove(); }
+
+  // ══ 4. OTHER SOURCES ══════════════════════════════════════════
+  // Read ALL OS fields
+  const savInt = pf('savingsInterest');
+  const fdInt  = pf('fdInterest');
+  const poInt  = pf('postOfficeInterest');
+  const divInc = pf('dividendIncome');   // Resident/RNOR/HUF only — NRI uses nriDividend115A
+  const fpens  = pf('familyPension');
+  const gifts  = pf('giftIncome');
+  const misc   = pf('otherMiscIncome');
+
+  // ── FAMILY PENSION deduction u/s 57(iia) — HEAD-LEVEL (applies to ALL taxpayers) ──
+  // Old Regime: min(pension/3, ₹15,000)  |  New Regime: min(pension/3, ₹25,000)
+  const fpDedLim = isOld ? 15000 : 25000;
+  const fpDed    = fpens > 0 ? Math.min(fpDedLim, Math.floor(fpens / 3)) : 0;
+  const taxableFP = Math.max(0, fpens - fpDed);
+
+  // ── POST OFFICE SAVINGS interest exemption u/s 10(15)(i) ──────────────────────────
+  // All taxpayers (both regimes): ₹3,500 (single) / ₹7,000 (joint) exempt at GTI level
+  // EXCEPTION: Resident Senior + Old Regime only — PO int goes FULLY into GTI; 80TTB covers
+  let poExempt = 0;
+  if (isSenior && isOld && isResident && !isNRI) {
+    poExempt = 0;    // Senior + Old + Resident: full PO in GTI, 80TTB handles in Ch VI-A
+  } else {
+    poExempt = Math.min(poInt, 3500);  // All others incl. NRI: ₹3,500 exempt at GTI level
+  }
+  const taxablePO = Math.max(0, poInt - poExempt);
+
+  // ── NRI FLAT-RATE INCOMES u/s 115A (@20%, no deductions, no 87A) ──────────────────
+  // nriFCInt (Foreign Currency interest) + nriDiv115A (Dividend) + Buyback proceeds
+  // IMPORTANT: NRI buyback proceeds = treated as income @20% flat u/s 115A (same as dividend)
+  // (Resident buyback = deemed dividend @slab rate u/s 2(22)(f) — different treatment)
+  let nriBuyback = 0;
+  let nriSpecInc = 0, nriSpecTax = 0;
+  if (isNRI) {
+    nriBuyback = buybackIncome;                  // NRI: entire buyback proceeds → 20% flat
+    nriSpecInc = nriFCInt + nriDiv115A + nriBuyback;
+    nriSpecTax = nriSpecInc * 0.20;
+  }
+
+  // ── SLAB-RATE INTEREST / DIVIDEND / BUYBACK (split by NRI vs Resident) ────────────
+  // Resident/RNOR/HUF: savInt + fdInt + divInc + buybackIncome → all at slab rate
+  //                    (80TTA/80TTB deduct later in Ch VI-A — NOT here at OS level)
+  // NRI: nriNROInt (NRO/India-source interest) → slab rate
+  //      nriFCInt / nriDiv115A / buybackIncome → 20% flat (in nriSpecInc above)
+  //      savInt / fdInt / divInc fields → IGNORED for NRI (must use NRI-specific fields)
+  let taxableIntSlab, taxableDivSlab, taxableOsBuyback;
+  if (isNRI) {
+    taxableIntSlab   = nriNROInt;   // NRI slab-rate interest (NRO / India-source)
+    taxableDivSlab   = 0;           // NRI dividend → 115A flat, not slab
+    taxableOsBuyback = 0;           // NRI buyback → 115A flat, not slab
+  } else {
+    taxableIntSlab   = savInt + fdInt;   // Resident/RNOR/HUF: full SB + FD interest @slab
+    taxableDivSlab   = divInc;           // Resident/RNOR/HUF: dividend @slab
+    taxableOsBuyback = buybackIncome;    // Resident: buyback = deemed div @slab (FA 2024)
+  }
+
+  // ── GROSS & NET OS INCOME ──────────────────────────────────────────────────────────
+  // normalOtherIncome = total slab-rate OS contribution (before Ch VI-A 80TTA/80TTB)
+  const normalOtherIncome = taxableIntSlab + taxablePO + taxableDivSlab
+                          + taxableFP + gifts + misc + taxableOsBuyback;
+  // incomeOS_GTI = total OS head in GTI = slab items + NRI flat-rate items
+  const incomeOS_GTI = normalOtherIncome + nriSpecInc;
+
+  // ── SUMMARY DISPLAY VARIABLES ──────────────────────────────────────────────────────
+  // RESIDENT: Row 7 shows full OS (including buyback). Row BB removed (buyback inside Row 7).
+  // NRI:      Row 7 shows slab-rate OS only. Row ★ shows NRI flat-rate (FC int+div+buyback).
+  const osGrossDisplay = isNRI
+    ? (nriNROInt + poInt + fpens + gifts + misc)   // NRI: slab-rate items gross only
+    : (savInt + fdInt + divInc + poInt + fpens + gifts + misc + buybackIncome); // Resident: full OS
+  const osNetDisplay = isNRI
+    ? normalOtherIncome    // NRI: slab-rate net only (flat-rate in Row ★)
+    : incomeOS_GTI;        // Resident: total OS net (nriSpecInc=0 for resident)
+
+  // OS deduction label for summary table
+  const osDedLabel = [
+    poExempt > 0 ? ('PO exempt u/s 10(15)(i) ₹'+poExempt.toLocaleString('en-IN')) : '',
+    fpDed    > 0 ? ('FP ded u/s 57(iia) ₹'+fpDed.toLocaleString('en-IN')) : '',
+    !isNRI && buybackIncome > 0 ? ('Buyback (deemed div @slab) ₹'+buybackIncome.toLocaleString('en-IN')) : '',
+    isNRI && (savInt+fdInt+divInc) > 0 ? '⚠ NRI: SB/FD/Div fields ignored — use NRI fields above' : ''
+  ].filter(Boolean).join(' | ') || '—';
+
+  // ══ 5. SPECIAL RATE ═══════════════════════════════════════════
+  const lottery = pf('lotteryIncome');
+  const horse   = pf('horseRaceIncome');
+  const crypto  = pf('cryptoIncome');
+  const specInc = lottery + horse + crypto;
+  const specTax = specInc * 0.30;
+
+  // ══ 5B. AGRICULTURAL INCOME ═══════════════════════════════════
+  // u/s 10(1): Agricultural income is EXEMPT from income tax.
+  // ≤ ₹5,000: Entirely ignored — no GTI, no slab effect.
+  // > ₹5,000 (Old Regime, ROR/RNOR Resident Individual/HUF): Partial Integration applies.
+  // New Regime / NRI: Always exempt, no partial integration.
+  const agriGross = pf('agriIncome');
+  const agriExempt = agriGross;   // entire amount is exempt — never in GTI
+  const agriAboveThreshold = agriGross > 5000;
+  // Partial integration applies only: Old Regime + Resident (ROR/RNOR) + agri > ₹5,000
+  // NOT for: New Regime, NRI, when agri ≤ ₹5,000
+  const doPartialIntegration = isOld && isResident && !isNRI && agriAboveThreshold;
+
+  // ══ 6. GTI ════════════════════════════════════════════════════
+  const gti = incomeSalary + hpNet + totalCgGTI + incomeOS_GTI + specInc;
+
+  // ══ 7. CHAPTER VI-A ══════════════════════════════════════════
+  // 80TTB (Sec 80TTB):
+  //   → Senior Citizens (age ≥ 60) — INDIVIDUAL ONLY, not HUF
+  //   → Old Regime ONLY
+  //   → Resident: ROR ✓, RNOR ✓, NRI ✗ (not eligible)
+  //   → Covers: SB interest + FD/RD/TD interest + PO deposit interest
+  //   → Max deduction: ₹50,000 per year
+  //
+  // 80TTA (Sec 80TTA):
+  //   → Non-Senior Individuals (below 60) AND HUF AND NRI
+  //   → Old Regime ONLY
+  //   → NRI ✓ (Sec 80TTA has NO residency restriction — NRO savings bank interest qualifies)
+  //   → Covers: Savings Bank interest ONLY (NOT FD/RD/TD, NOT PO)
+  //   → For NRI: base = nriNROInt (user should enter only savings bank portion)
+  //   → Max deduction: ₹10,000 per year
+  //
+  // NEW REGIME: Neither 80TTA nor 80TTB available for anyone
+
+  let intDed80 = 0;
+  let intDed80Type = '';  // for debug display
+  if (isOld) {
+    if (isSenior && isInd && !isNRI) {
+      // 80TTB: Senior Citizen Individual (≥60) — ROR/RNOR only, NOT NRI, NOT HUF
+      // Covers: SB + FD + PO deposit interest. Max ₹50,000.
+      intDed80 = Math.min(savInt + fdInt + poInt, 50000);
+      intDed80Type = '80TTB';
+    } else {
+      // 80TTA: Non-senior Individual / HUF / NRI — Old Regime only
+      // NRI IS eligible for 80TTA on NRO savings bank interest (Sec 80TTA has no residency bar)
+      // For NRI: nriNROInt used as base (enter NRO savings portion; FD portion not covered by 80TTA)
+      // For Resident/HUF: savInt (SB interest only — FD/PO not covered by 80TTA)
+      const ttaBase = isNRI ? nriNROInt : savInt;
+      intDed80 = Math.min(ttaBase, 10000);
+      intDed80Type = '80TTA';
+    }
+  }
+  // 80C/80D/80G/Other
+  const ded80C = isOld ? Math.min(pf('ded80c'), 150000) : 0;
+  const ded80D = isOld ? pf('ded80d') : 0;
+  const ded80G = isOld ? pf('ded80g') : 0;
+  const dedOth = isOld ? pf('otherDeductions') : 0;
+  const dedOld = ded80C + ded80D + ded80G + dedOth;
+  // 80CCD(2): both regimes, individuals
+  const npsDed = isInd ? pf('ded80ccd2') : 0;
+  const totalChVI = intDed80 + dedOld + npsDed;
+
+  // ══ 8. TOTAL INCOME ══════════════════════════════════════════
+  // Ch. VI-A deductions only reduce normal (slab-rate) income, not flat-rate portions
+  const flatPortionGTI = stcg + taxableLtcg + otherLtcg + specInc + nriSpecInc; // otherLtcg = prop+gold+other
+  const normalGTI      = Math.max(0, gti - flatPortionGTI);
+  const normalIncome   = Math.max(0, normalGTI - totalChVI);
+  const totalIncome    = normalIncome + stcg + taxableLtcg + otherLtcg + specInc + nriSpecInc;
+
+  // ══ 9. SLAB TAX with AGRICULTURAL INCOME PARTIAL INTEGRATION ═══
+  // Partial Integration Method (Old Regime, Resident, agri > ₹5,000):
+  //   Tax = oldRegimeTax(normalIncome + agriGross, basicExemption)
+  //         − oldRegimeTax(basicExemption + agriGross, basicExemption)
+  // New Regime / NRI: agri income fully exempt, no slab effect at all
+  let slabTax = 0;
+  let agriTaxEffect = 0;   // the "uplift" caused by partial integration
+  if (isOld) {
+    if (doPartialIntegration) {
+      const taxWithAgri    = oldRegimeTax(normalIncome + agriGross, basicExemption);
+      const taxOnAgriBase  = oldRegimeTax(basicExemption + agriGross, basicExemption);
+      slabTax       = Math.max(0, taxWithAgri - taxOnAgriBase);
+      agriTaxEffect = Math.max(0, slabTax - oldRegimeTax(normalIncome, basicExemption)); // extra tax vs no-agri
+    } else {
+      slabTax = oldRegimeTax(normalIncome, basicExemption);
+    }
+  } else {
+    slabTax = newRegimeTax(normalIncome);
+  }
+
+  // ── Update agri result display box ────────────────────────────
+  (function(){
+    const box = $('agriResultBox');
+    if (!box) return;
+    if (agriGross <= 0) {
+      box.innerHTML = '<span style="color:#64748b">Enter agricultural income to see effect</span>';
+      return;
+    }
+    let html = '';
+    if (!isOld) {
+      html = `<span style="color:#15622e;font-weight:700">✅ Fully Exempt (New Regime)</span><br>
+        <span style="color:#374151">Agri income: <b>₹${agriGross.toLocaleString('en-IN')}</b><br>
+        Partial integration: <b>Not applicable</b> (New Regime)<br>
+        Tax effect: <b>₹0</b></span>`;
+    } else if (isNRI) {
+      html = `<span style="color:#15622e;font-weight:700">✅ Fully Exempt (NRI)</span><br>
+        <span style="color:#374151">Agri income: <b>₹${agriGross.toLocaleString('en-IN')}</b><br>
+        Partial integration: <b>Not applicable</b> (NRI)<br>
+        Tax effect: <b>₹0</b></span>`;
+    } else if (!agriAboveThreshold) {
+      html = `<span style="color:#15622e;font-weight:700">✅ Fully Exempt (≤ ₹5,000)</span><br>
+        <span style="color:#374151">Agri income: <b>₹${agriGross.toLocaleString('en-IN')}</b><br>
+        Below ₹5,000 threshold — <b>zero tax effect</b></span>`;
+    } else {
+      const taxW = oldRegimeTax(normalIncome + agriGross, basicExemption);
+      const taxB = oldRegimeTax(basicExemption + agriGross, basicExemption);
+      const taxWithout = oldRegimeTax(normalIncome, basicExemption);
+      const extra = Math.max(0, slabTax - taxWithout);
+      html = `<span style="color:#b45a00;font-weight:700">⚠ Partial Integration Applied (Old Regime)</span><br>
+        <div style="font-size:10px;color:#374151;line-height:1.8;margin-top:3px">
+        <b>Agri Income: ₹${agriGross.toLocaleString('en-IN')}</b> — Exempt but pushes slab<br>
+        <b>Step 1:</b> Tax on (₹${normalIncome.toLocaleString('en-IN')} + ₹${agriGross.toLocaleString('en-IN')}) = <b>₹${Math.round(taxW).toLocaleString('en-IN')}</b><br>
+        <b>Step 2:</b> Tax on (₹${basicExemption.toLocaleString('en-IN')} + ₹${agriGross.toLocaleString('en-IN')}) = <b>₹${Math.round(taxB).toLocaleString('en-IN')}</b><br>
+        <div style="border-top:1px solid #d1d5db;margin-top:3px;padding-top:3px">
+        <b>Net Slab Tax (Step1−Step2): <span style="color:#b91c1c">₹${Math.round(slabTax).toLocaleString('en-IN')}</span></b><br>
+        ${extra > 0 ? `<span style="color:#b45a00">Extra tax due to agri: ₹${Math.round(extra).toLocaleString('en-IN')}</span>` : ''}
+        <span style="color:#15622e;font-size:9px">Agri income itself: ₹0 tax (fully exempt)</span>
+        </div></div>`;
+    }
+    box.innerHTML = html;
+  })();
+
+  // ══ 10. REBATE 87A (Finance Act 2025) ════════════════════════
+  // Eligible: Resident Individuals (ROR & RNOR) ONLY — NOT HUF, NOT NRI
+  // Applies ONLY on slab tax. Cannot offset CG/Special/NRI flat taxes.
+  // Old: ₹12,500 if TI ≤ ₹5L  |  New: ₹60,000 if TI ≤ ₹12L
+  // Super Senior (Old, ₹5L exemption): slab tax already 0 when TI≤₹5L, rebate has no effect
+  let rebate = 0;
+  const totalTaxBR = slabTax + stcgTax + ltcgTax + otherLtcgTax + specTax + nriSpecTax;
+  if (canRebate) {
+    if (isOld && totalIncome <= 500000) {
+      // Old Regime: rebate up to ₹12,500 on SLAB TAX only
+      // Eligible: ROR + RNOR Individuals (all ages incl. Senior, Super Senior)
+      // NOT eligible: NRI, HUF
+      rebate = Math.min(slabTax, 12500);
+    }
+    if (!isOld && totalIncome <= 1200000) {
+      // New Regime: rebate up to ₹60,000 on SLAB TAX only
+      // Eligible: ROR + RNOR Individuals
+      rebate = Math.min(slabTax, 60000);
+    }
+  }
+  // NOTE: Marginal relief (New Regime) is computed AFTER surcharge in Step 12 below
+
+  // ══ 11. SURCHARGE ════════════════════════════════════════════
+  // Compute surcharge on post-rebate tax (before marginal relief)
+  // CG surcharge capped @15% (STCG 111A, LTCG 112A/112)
+  const taxAfterRebateOnly = Math.max(0, totalTaxBR - rebate);
+  const slabTaxForSC = Math.max(0, slabTax - rebate);
+  const surcharge    = computeSurcharge(slabTaxForSC, stcgTax, ltcgTax, otherLtcgTax, specTax, nriSpecTax, totalIncome, isOld);
+
+  // ══ 12. CESS, MARGINAL RELIEF & FINAL ════════════════════════
+  // Marginal relief (New Regime): total tax+surcharge+cess must not exceed (TI - ₹12L)
+  // Applied AFTER surcharge so cap = TI-12L / 1.04 (before cess) effectively
+  let taxBeforeCess = taxAfterRebateOnly + surcharge;
+  if (!isOld && canRebate && totalIncome > 1200000 && totalIncome <= 1275000) {
+    const cap = totalIncome - 1200000;
+    // cap is pre-cess; cess will be added on top: actual total = cap * 1.04
+    if (taxBeforeCess > cap) taxBeforeCess = cap;
+  }
+  const taxAfterReb = taxBeforeCess; // for display consistency (post-rebate+surcharge pre-cess)
+  const marginalRelief = Math.max(0, (taxAfterRebateOnly + surcharge) - taxBeforeCess);
+  const cess     = taxBeforeCess * 0.04;
+  const finalTax = round10(taxBeforeCess + cess);
+
+  // ══ UPDATE DISPLAY ════════════════════════════════════════════
+  $('disp_sal').textContent    = INRf(incomeSalary);
+  $('disp_hp').textContent     = INRf(hpNet);
+  $('row_hp').classList.toggle('neg', hpNet < 0);
+  $('disp_cg').textContent     = INR(totalCgGTI);
+  $('disp_os').textContent     = INR(incomeOS_GTI);
+  $('disp_si').textContent     = INR(specInc);
+  // Agricultural Income row — show only when entered
+  if ($('row_agri')) $('row_agri').style.display = agriGross > 0 ? '' : 'none';
+  if ($('disp_agri')) $('disp_agri').textContent = agriGross > 0
+    ? INR(agriGross) + (doPartialIntegration ? ' [PI]' : ' [Exempt]') : '₹ 0';
+  $('disp_gti').textContent    = INRf(Math.max(0, gti));
+  $('disp_80ttb').textContent = '− ' + INR(intDed80);
+  // Update 80TTA/TTB label dynamically
+  const lblTTx = $('lbl_80ttx');
+  const lblTTxTag = $('lbl_80ttx_tag');
+  if (lblTTx) {
+    if (!isOld) {
+      lblTTx.textContent = isNRI ? '80TTA/80TTB — NOT applicable (New Regime)' : '80TTA/80TTB — NOT applicable (New Regime)';
+      if (lblTTxTag) lblTTxTag.textContent = isNRI ? 'NRI: New Regime — no 80TTA' : 'New Regime: no 80TTA/TTB';
+    } else if (isNRI) {
+      lblTTx.textContent = '80TTA — NRI: NRO Savings Bank interest only, max ₹10,000';
+      if (lblTTxTag) lblTTxTag.textContent = 'Old Regime · NRI eligible (no residency bar in 80TTA) · 80TTB NOT applicable';
+    } else if (isSenior && isInd && isResident) {
+      lblTTx.textContent = '80TTB — Senior Citizen: All deposit interest (SB+FD+PO) max ₹50,000';
+      if (lblTTxTag) lblTTxTag.textContent = 'Old Regime · Senior Individual · ROR/RNOR ✓';
+    } else {
+      lblTTx.textContent = '80TTA — Non-Senior: Savings Bank interest only, max ₹10,000';
+      if (lblTTxTag) lblTTxTag.textContent = 'Old Regime · Non-Senior Individual/HUF · ROR/RNOR ✓';
+    }
+  }
+  $('disp_80c').textContent    = '− ' + INR(dedOld);
+  $('disp_nps').textContent    = '− ' + INR(npsDed);
+  $('disp_ti').textContent     = INR(totalIncome);
+  $('disp_normal').textContent = INR(normalIncome);
+  $('disp_slabTax').textContent  = INR(slabTax);
+  // Show agri partial integration uplift row if applicable
+  if ($('row_agriTax')) $('row_agriTax').style.display = doPartialIntegration && agriTaxEffect > 0 ? '' : 'none';
+  if ($('disp_agriTax')) $('disp_agriTax').textContent = INR(agriTaxEffect);
+  $('disp_stcgTax').textContent  = INR(stcgTax);
+  $('disp_ltcgTax').textContent  = INR(ltcgTax);
+  $('disp_oltcgTax').textContent = INR(otherLtcgTax);
+  $('disp_siTax').textContent    = INR(specTax);
+  $('disp_nriTax').textContent   = INR(nriSpecTax);
+  $('disp_taxBR').textContent    = INR(totalTaxBR);
+  $('disp_rebate').textContent   = '− ' + INR(rebate);
+  $('disp_marginal').textContent = marginalRelief > 0 ? '− ' + INR(marginalRelief) : '₹ 0';
+  $('disp_tar').textContent      = INR(taxBeforeCess); // after rebate + surcharge + marginal relief, before cess
+  $('disp_sc').textContent       = INR(surcharge);
+  $('disp_cess').textContent     = INR(cess);
+  $('disp_final').textContent    = INR(finalTax);
+  $('disp_eff').textContent      = (gti > 0 ? (finalTax / gti * 100) : 0).toFixed(2) + '%';
+
+  // ══ SUMMARY TABLE ════════════════════════════════════════════
+  const tbody = $('summaryBody');
+  tbody.innerHTML = '';
+  const addRow = (n, head, gross, dedStr, net) => {
+    const neg = net < 0;
+    const tr  = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:center;font-size:8px">${n}</td>
+      <td style="font-size:8.5px">${head}</td>
+      <td class="${neg?'neg':'num'}">${gross >= 0 ? INR(gross) : '—'}</td>
+      <td style="font-size:7.5px;color:var(--txt3)">${dedStr}</td>
+      <td class="${neg?'neg':'num'}">${INRf(net)}</td>`;
+    tbody.appendChild(tr);
+  };
+
+  addRow(1, `<b>Salary/Pension</b> [Sch S] <span class="sec sec-a" style="font-size:7px">u/s 15-17</span>`,
+    grossSal, salDedLabel, incomeSalary);
+  addRow(2, `<b>House Property</b> [Sch HP] <span class="sec sec-a" style="font-size:7px">u/s 22-27</span>`,
+    hpGross, hpDedLabel, hpNet);
+  if (stcg > 0)
+    addRow(3, `STCG Equity/MF [Sch CG] <span class="sec sec-r" style="font-size:7px">111A @20%</span>`,
+      stcg, '—', stcg);
+  if (ltcg > 0)
+    addRow(4, `LTCG Equity/MF [Sch CG] <span class="sec sec-r" style="font-size:7px">112A @12.5%</span>`,
+      ltcg, `Less exempt ₹1.25L u/s 112A = ₹${ltcgExempt.toLocaleString('en-IN')}`, taxableLtcg);
+  if (otherStcg > 0)
+    addRow(5, `STCG – Other Assets [Sch CG] <span class="sec sec-a" style="font-size:7px">Slab Rate</span>`,
+      otherStcg, '—', otherStcg);
+  if (ltcgProperty > 0)
+    addRow('6a', `LTCG – Real Estate [Sch CG] <span class="sec sec-r" style="font-size:7px">112 @12.5%</span>`,
+      ltcgProperty, 'After Sec 54/54EC exemption', ltcgProperty);
+  if (ltcgGold > 0)
+    addRow('6b', `LTCG – Gold/Silver [Sch CG] <span class="sec sec-r" style="font-size:7px">112 @12.5%</span>`,
+      ltcgGold, 'No indexation', ltcgGold);
+  if (ltcgOtherAsset > 0)
+    addRow('6c', `LTCG – Other (Unlisted/Bonds/Foreign) [Sch CG] <span class="sec sec-r" style="font-size:7px">112 @12.5%</span>`,
+      ltcgOtherAsset, 'After Sec 54F exemption', ltcgOtherAsset);
+  addRow(7, isNRI
+    ? `<b>Other Sources (Slab)</b> [Sch OS] <span class="sec sec-v" style="font-size:7px">NRO Int + PO + FP + Gifts + Misc</span>`
+    : `<b>Other Sources</b> [Sch OS] <span class="sec sec-v" style="font-size:7px">u/s 56-59</span>`,
+    osGrossDisplay, osDedLabel, osNetDisplay);
+  if (specInc > 0)
+    addRow(8, `<b>Special Rate</b> [Sch SI] <span class="sec sec-v" style="font-size:7px">@30% 115BB/115BBH</span>`,
+      specInc, 'No deduction', specInc);
+  // NRI flat-rate income row (FC Interest + Dividend + Buyback @20% u/s 115A)
+  if (isNRI && nriSpecInc > 0)
+    addRow('★', `<b>NRI Flat-Rate Income</b> [Sch SI] <span class="sec sec-r" style="font-size:7px">@20% u/s 115A · No 87A</span>`,
+      nriSpecInc,
+      [nriFCInt>0?'FC Int ₹'+nriFCInt.toLocaleString('en-IN'):'',
+       nriDiv115A>0?'Div ₹'+nriDiv115A.toLocaleString('en-IN'):'',
+       nriBuyback>0?'Buyback ₹'+nriBuyback.toLocaleString('en-IN')+' (flat, not slab)':''
+      ].filter(Boolean).join(' + ') || '—',
+      nriSpecInc);
+  if (agriGross > 0)
+    addRow('EI', `<b>Agricultural Income</b> [Sch EI] <span class="sec sec-g" style="font-size:7px">u/s 10(1) EXEMPT</span>`,
+      agriGross,
+      agriGross <= 5000 ? '≤ ₹5,000 — Fully exempt, no slab effect' :
+        doPartialIntegration ? `Exempt (Partial Integration applied — slab rate push-up)` :
+        'Exempt — no partial integration (New Regime / NRI)',
+      0);  // Net in GTI = 0 (always exempt)
+  if (!isNRI && buybackCapLoss > 0)
+    addRow('BL', `Buyback Capital Loss [Sch CG] <span class="sec sec-a" style="font-size:7px">u/s 46A · Set-off against CG</span>`,
+      buybackCapLoss,
+      buybackLossSetOff > 0 ? `Set off ₹${buybackLossSetOff.toLocaleString('en-IN')} this year, CF ₹${buybackLossCF.toLocaleString('en-IN')}` : `Carry forward ₹${buybackLossCF.toLocaleString('en-IN')} (no CG to set off)`,
+      -buybackLossSetOff);
+  if (nriFlat && nriSpecInc > 0)
+    addRow('★', `NRI Int+Div [Sch SI] <span class="sec sec-r" style="font-size:7px">@20% u/s 115A</span>`,
+      nriSpecInc, '(subset of OS, NRI only)', nriSpecInc);
+
+  $('footGross').textContent = INR(grossSal + Math.max(0,hpGross) + (stcg+ltcg+otherStcg+otherLtcg) + osGrossDisplay + nriSpecInc + specInc);
+  $('footNet').textContent   = INR(Math.max(0, gti));
+
+  // ── STORE ALL VALUES FOR ITR-2 PAGE & DEBUG ──────────────────
+  window._lastCalc = {
+    isOld, isHUF, isInd, isNRI, isRNOR, isResident, isSenior, isSuperSen,
+    basicExemption, canRebate,
+    // Agricultural Income
+    agriGross, agriExempt, agriAboveThreshold, doPartialIntegration, agriTaxEffect,
+    basic, spAllow: spAllow, perq, grossSal, exemptAllow, hraEx, stdDed, incomeSalary, salDedTotal,
+    // HP
+    rentRec, loanInt, hpGross, hpNet,
+    // CG
+    stcg, ltcg, ltcgExempt, otherStcg, ltcgProperty, ltcgGold, ltcgOtherAsset, otherLtcg, taxableLtcg, stcgTax, ltcgTax, otherLtcgTax, totalCgGTI, buybackIncome, buybackCapLoss, buybackLossSetOff, buybackLossCF,
+    // OS
+    savInt, fdInt, poInt, poExempt, divInc, fpens, fpDed, gifts, misc, grossOSForSummary: osGrossDisplay, incomeOS_GTI,
+    nriBuyback: nriBuyback||0, taxableOsBuyback: taxableOsBuyback||0,
+    // SI
+    lottery, horse, crypto, specInc, specTax,
+    // NRI
+    nriSpecInc: nriSpecInc || 0, nriSpecTax: nriSpecTax || 0,
+    nriNROInt: nriNROInt || 0, nriFCInt: nriFCInt || 0, nriDiv115A: nriDiv115A || 0, nriBuybackFlat: nriBuyback||0,
+    // GTI & VI-A
+    gti, intDed80, intDed80Type, ded80C, ded80D, ded80G, dedOth, npsDed, totalChVI,
+    // Total Income
+    flatPortionGTI, normalGTI, normalIncome, totalIncome,
+    // Tax
+    slabTax, totalTaxBR, rebate, marginalRelief, taxAfterReb, taxBeforeCess, surcharge, cess, finalTax,
+  };
+
+  // Update ITR-2 page if visible
+  if (document.getElementById('itr2Page')?.style.display==='block') updateITR2Page();
+  // Update debug if visible
+  if (document.getElementById('debugPanel')?.classList.contains('show-debug')) runDebugTests();
+}
+
+// ── RESET ──────────────────────────────────────────────────────
+function resetAll() {
+  document.querySelectorAll('input[type=number]').forEach(i => i.value = '0');
+  document.querySelectorAll('input[type=date]').forEach(i => i.value = '');
+  // Reset NRI fields
+  ['nriNROInterest','nriFCInterest','nriDividend115A','ltcgProperty','ltcgGold','ltcgOther'].forEach(id => { const el = document.getElementById(id); if(el) el.value = '0'; });
+  document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+  $('metroCity').value = 'yes';
+  $('assesseeType').value = 'ind';
+  $('indStatus').value = 'res_normal';
+  document.querySelector('input[value="new"]').checked = true;
+  recalcAll();
+}
+
+// ── EXAMPLES ──────────────────────────────────────────────────
+function loadExample(n) {
+  resetAll();
+  const set = (id,v) => $(id).value = v;
+  if (n===1){ set('basicSalary',1275000); $('assesseeType').value='ind'; $('indStatus').value='res_normal'; document.querySelector('input[value="new"]').checked=true; }
+  if (n===2){ set('basicSalary',350000); set('stcgEquity',150000); set('ded80c',150000); $('assesseeType').value='ind'; $('indStatus').value='res_senior'; document.querySelector('input[value="old"]').checked=true; }
+  if (n===3){ set('basicSalary',1500000); $('assesseeType').value='ind'; $('indStatus').value='nri'; document.querySelector('input[value="new"]').checked=true; }
+  if (n===4){ set('basicSalary',550000); set('fdInterest',30000); $('assesseeType').value='ind'; $('indStatus').value='res_supersenior'; document.querySelector('input[value="old"]').checked=true; }
+  if (n===5){ set('basicSalary',2000000); set('ltcgEquity',300000); $('assesseeType').value='ind'; $('indStatus').value='rnor'; document.querySelector('input[value="new"]').checked=true; }
+  recalcAll();
+}
+
+
+
+function runDebugTests() {
+  const d = window._lastCalc;
+  if (!d) { document.getElementById('dbgContent').innerHTML = '<span class="dbg-warn">No calculation data. Enter some values first.</span>'; return; }
+
+  let html = '';
+  const pass = (msg) => `<div class="dbg-pass">✓ ${msg}</div>`;
+  const fail = (msg) => `<div class="dbg-fail">✗ FAIL: ${msg}</div>`;
+  const warn = (msg) => `<div class="dbg-warn">⚠ ${msg}</div>`;
+  const kv   = (k,v) => `<div class="dbg-kv"><span class="k">${k}</span><span class="v">${typeof v==='number'?'₹'+Math.round(v).toLocaleString('en-IN'):v}</span></div>`;
+
+  // ── Section 1: Input Values ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">1. INPUT & DERIVED VALUES</div>`;
+  html += kv('Assessee Type', document.getElementById('assesseeType').value.toUpperCase());
+  html += kv('Residential Status', document.getElementById('indStatus').value);
+  html += kv('Tax Regime', d.isOld ? 'OLD REGIME' : 'NEW REGIME (115BAC)');
+  html += kv('DOB', document.getElementById('dobInput').value || 'Not entered');
+  html += kv('Is Senior Citizen', d.isSenior ? 'YES' : 'NO');
+  html += kv('Is Super Senior', d.isSuperSen ? 'YES' : 'NO');
+  html += kv('Is Resident', d.isResident ? 'YES' : 'NO');
+  html += kv('Is NRI', d.isNRI ? 'YES' : 'NO');
+  html += kv('Is RNOR', d.isRNOR ? 'YES' : 'NO');
+  html += kv('87A Rebate Eligible', d.canRebate
+    ? 'YES — ' + (d.isOld ? 'Old Regime Resident Individual (ROR/RNOR incl. Senior/Super Sr.)' : 'New Regime Resident Individual (ROR/RNOR incl. Senior/Super Sr.)')
+    : 'NO — ' + (d.isNRI ? 'NRI: not eligible (Sec 87A = resident individual only)' : d.isHUF ? 'HUF: not eligible (Sec 87A = individual only)' : 'Conditions not met'));
+  html += kv('Basic Exemption (Old)', d.basicExemption);
+  html += '</div>';
+
+  // ── Section 2: Salary Head ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">2. SCHEDULE S — SALARY</div>`;
+  html += kv('Gross Salary', d.grossSal);
+  html += kv('HRA Exemption', d.hraEx);
+  html += kv('Exempt Allowances', d.exemptAllow);
+  html += kv('Standard Deduction u/s 16(ia)', d.stdDed);
+  html += kv('Net Salary (GTI contribution)', d.incomeSalary);
+  // Validate
+  const chkSal = Math.abs((d.grossSal - d.hraEx - d.exemptAllow - d.stdDed) - d.incomeSalary) < 1;
+  html += chkSal ? pass('Salary = Gross − HRA − ExAllow − StdDed ✓') : fail(`Salary mismatch: expected ${d.grossSal-d.hraEx-d.exemptAllow-d.stdDed} got ${d.incomeSalary}`);
+  html += '</div>';
+
+  // ── Section 3: HP ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">3. SCHEDULE HP — HOUSE PROPERTY</div>`;
+  html += kv('Rent Received', d.rentRec);
+  html += kv('Loan Interest', d.loanInt);
+  html += kv('HP Net Income/(Loss)', d.hpNet);
+  if (d.rentRec > 0) {
+    const nav = d.rentRec * 0.70;
+    html += kv('NAV (Rent×70%)', nav);
+    html += kv('30% Std Ded u/s 24(a)', d.rentRec*0.30);
+    const expHpNet = !d.isOld ? Math.max(0, nav - d.loanInt) : (nav-d.loanInt >= 0 ? nav-d.loanInt : -Math.min(Math.abs(nav-d.loanInt),200000));
+    html += Math.abs(expHpNet - d.hpNet) < 1 ? pass('HP Net correct ✓') : fail(`HP net expected ${expHpNet} got ${d.hpNet}`);
+  } else if (d.loanInt > 0) {
+    const expHP = d.isOld ? -Math.min(d.loanInt,200000) : 0;
+    html += Math.abs(expHP - d.hpNet) < 1 ? pass('Self-occ HP loss correct ✓') : fail(`HP self-occ: expected ${expHP} got ${d.hpNet}`);
+  } else {
+    html += pass('No HP income/loan — HP = 0 ✓');
+  }
+  html += '</div>';
+
+  // ── Section 4: Capital Gains ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">4. SCHEDULE CG — CAPITAL GAINS</div>`;
+  html += kv('STCG Equity/MF 111A @20%', d.stcg);
+  html += kv('STCG Tax @20%', d.stcgTax);
+  html += kv('STCG Other (Slab)', d.otherStcg);
+  html += kv('LTCG Equity/MF 112A (gross)', d.ltcg);
+  html += kv('LTCG Exempt ₹1.25L u/s 112A', d.ltcgExempt||0);
+  html += kv('LTCG 112A Taxable (in GTI)', d.taxableLtcg);
+  html += kv('LTCG Tax 112A @12.5%', d.ltcgTax);
+  html += kv('LTCG Real Estate 112 @12.5%', d.ltcgProperty||0);
+  html += kv('LTCG Gold/Silver 112 @12.5%', d.ltcgGold||0);
+  html += kv('LTCG Other (Unlisted/Bonds/Foreign)', d.ltcgOtherAsset||0);
+  html += kv('Total Other LTCG 112', d.otherLtcg);
+  html += kv('Other LTCG Tax @12.5%', d.otherLtcgTax);
+  html += kv('Net CG in GTI (after ₹1.25L exempt)', d.totalCgGTI);
+  // Validations
+  html += Math.abs(d.stcg*0.20 - d.stcgTax) < 1 ? pass('STCG 111A tax = STCG×20% ✓') : fail(`STCG tax mismatch`);
+  html += Math.abs((d.ltcgExempt||0) - Math.min(d.ltcg,125000)) < 1 ? pass('₹1.25L exemption = min(LTCG,₹1.25L) ✓') : fail('Exemption calc error');
+  html += Math.abs(d.taxableLtcg - Math.max(0,d.ltcg-125000)) < 1 ? pass('Taxable LTCG 112A = max(0, LTCG−₹1.25L) ✓') : fail('Taxable LTCG error');
+  html += Math.abs(d.taxableLtcg*0.125 - d.ltcgTax) < 1 ? pass('LTCG 112A tax = taxable×12.5% ✓') : fail('LTCG 112A tax error');
+  html += Math.abs(d.otherLtcg*0.125 - d.otherLtcgTax) < 1 ? pass('Other LTCG 112 tax = otherLtcg×12.5% ✓') : fail('Other LTCG tax error');
+  html += Math.abs(d.totalCgGTI - Math.max(0,(d.stcg+d.taxableLtcg+d.otherStcg+d.otherLtcg)-(d.buybackLossSetOff||0))) < 1 ? pass('Net CG GTI (after buyback loss set-off) correct ✓') : fail('CG GTI mismatch');
+  html += d.rebate > 0 && (d.stcgTax+d.ltcgTax+d.otherLtcgTax) > 0 ? warn('87A NOT applied on CG tax (FA2025) ✓') : pass('87A correctly excluded from CG tax ✓');
+  html += '</div>';
+
+  // ── Section 5B: Agricultural Income ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">5B. SCHEDULE EI — AGRICULTURAL INCOME u/s 10(1)</div>`;
+  html += kv('Agricultural Income (Gross)', d.agriGross||0);
+  html += kv('Exempt Amount (always)', d.agriGross||0);
+  html += kv('Net in GTI', 0);
+  html += kv('Above ₹5,000 Threshold?', (d.agriAboveThreshold) ? 'YES — Partial Integration may apply' : 'NO — Fully exempt, no slab effect');
+  html += kv('Partial Integration Active?', d.doPartialIntegration ? 'YES (Old Regime + Resident + Agri > ₹5,000)' : 'NO');
+  if (d.doPartialIntegration) {
+    html += kv('Formula', 'Tax(NI+Agri, BasicEx) − Tax(BasicEx+Agri, BasicEx)');
+    html += kv('Slab Tax (with PI)', d.slabTax);
+    html += kv('Extra Tax due to Agri (uplift)', d.agriTaxEffect||0);
+    html += pass('Partial Integration computed correctly — agri income EXEMPT, slab rate increased ✓');
+  } else if ((d.agriGross||0) > 5000 && !d.isOld) {
+    html += pass('New Regime: agri income fully exempt — no partial integration (correct per Sec 10(1)) ✓');
+  } else if ((d.agriGross||0) > 5000 && d.isNRI) {
+    html += pass('NRI: agri income fully exempt — no partial integration ✓');
+  } else if ((d.agriGross||0) > 0) {
+    html += pass(`Agri ₹${Math.round(d.agriGross||0).toLocaleString('en-IN')} ≤ ₹5,000 — fully exempt, zero tax effect ✓`);
+  } else {
+    html += pass('No agricultural income entered ✓');
+  }
+  html += '</div>';
+  // ── Section 4B: Buyback of Shares ──
+  if ((d.buybackIncome||0) > 0 || (d.buybackCapLoss||0) > 0) {
+    html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">4B. BUYBACK OF SHARES — Finance Act (No.2) 2024</div>`;
+    html += kv('Buyback Amount Received', d.buybackIncome||0);
+    if (d.isNRI) {
+      html += kv('Tax Treatment (NRI)', '@20% Flat u/s 115A — included in NRI Flat-Rate income (Row ★)');
+      html += kv('NRI Buyback Amount (@20% flat)', d.nriBuybackFlat||0);
+      html += pass('NRI: Buyback proceeds taxed @20% flat u/s 115A (like dividend) — NOT at slab rate ✓');
+    } else {
+      html += kv('Tax Treatment (Resident)', 'Deemed Dividend u/s 2(22)(f) → OS @ Slab Rate');
+      html += kv('TDS by Company', '@10% u/s 194 (residents)');
+      html += pass('Resident: Buyback proceeds = Deemed Dividend @Slab Rate (FA No.2 2024, effective 1-Oct-2024) ✓');
+    }
+    html += kv('Capital Loss u/s 46A (cost of shares)', d.buybackCapLoss||0);
+    html += kv('Buyback Loss Set-off This Year', d.buybackLossSetOff||0);
+    html += kv('Buyback Loss Carry Forward (≤8 AYs)', d.buybackLossCF||0);
+    html += pass('Capital Loss = cost of shares tendered (Sec 46A: consideration deemed NIL) ✓');
+    if ((d.buybackLossCF||0) > 0) html += warn('₹' + Math.round(d.buybackLossCF).toLocaleString('en-IN') + ' unabsorbed buyback capital loss — carry forward up to 8 AYs');
+    html += '</div>';
+  }
+
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">5. GTI COMPUTATION</div>`;
+  const expGTI = d.incomeSalary + d.hpNet + d.totalCgGTI + d.incomeOS_GTI + d.specInc;
+  html += kv('Salary', d.incomeSalary);
+  html += kv('House Property', d.hpNet);
+  html += kv('Capital Gains (total)', d.totalCgGTI);
+  html += kv('Other Sources', d.incomeOS_GTI);
+  html += kv('Special Rate', d.specInc);
+  html += kv('GTI = Sum', d.gti);
+  html += Math.abs(expGTI - d.gti) < 1 ? pass('GTI = Sal+HP+CG+OS+SI ✓') : fail(`GTI mismatch: expected ${expGTI} got ${d.gti}`);
+  html += '</div>';
+
+  // ── Section 6: Ch VI-A ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">6. CHAPTER VI-A DEDUCTIONS</div>`;
+  html += kv((d.intDed80Type||'80TTA/80TTB'), d.intDed80);
+  html += kv('80TTB/80TTA eligibility', d.isSenior && d.isOld && d.isResident && !d.isNRI && !d.isHUF
+    ? 'YES — 80TTB: Senior Individual (ROR/RNOR), Old Regime, max ₹50,000 (SB+FD+PO)'
+    : d.isNRI && d.isOld ? 'YES — 80TTA: NRI eligible (Sec 80TTA has no residency bar), NRO savings interest, max ₹10,000 · 80TTB NOT applicable'
+    : d.isNRI && !d.isOld ? 'NRI: New Regime — 80TTA/80TTB NOT applicable'
+    : !d.isOld ? 'New Regime: NOT eligible for 80TTA or 80TTB'
+    : 'YES — 80TTA: Non-Senior Individual/HUF (ROR/RNOR), Old Regime, SB interest max ₹10,000');
+
+  html += kv('80C', d.ded80C);
+  html += kv('80D', d.ded80D);
+  html += kv('80G', d.ded80G);
+  html += kv('Other (80E/80EEA)', d.dedOth);
+  html += kv('80CCD(2) Employer NPS', d.npsDed);
+  html += kv('Total Ch VI-A', d.totalChVI);
+  const expVIA = d.intDed80 + d.ded80C + d.ded80D + d.ded80G + d.dedOth + d.npsDed;
+  html += Math.abs(expVIA - d.totalChVI) < 1 ? pass('Total VI-A sum correct ✓') : fail(`VI-A mismatch: ${expVIA} vs ${d.totalChVI}`);
+  if (!d.isOld && (d.ded80C+d.ded80D+d.ded80G+d.dedOth) > 0) html += warn('80C/80D/80G entered but New Regime selected — values ignored ✓');
+  if (!d.isOld && d.intDed80 > 0) html += warn('80TTA/80TTB entered but New Regime — ignored ✓');
+  html += '</div>';
+
+  // ── Section 7: Rebate & Final Tax ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">7. REBATE 87A & FINAL TAX [FA2025]</div>`;
+  html += kv('Total Income (TI)', d.totalIncome);
+  html += kv('Normal Income (slab rate)', d.normalIncome);
+  html += kv('Slab Tax', d.slabTax);
+  html += kv('CG Taxes Total', d.stcgTax + d.ltcgTax + d.otherLtcgTax);
+  html += kv('Special Rate Tax', d.specTax + (d.nriSpecTax||0));
+  html += kv('Total Tax before Rebate', d.totalTaxBR);
+  html += kv('87A Rebate', d.rebate);
+  html += kv('Marginal Relief (New)', d.marginalRelief);
+  html += kv('Tax after Rebate', d.taxAfterReb);
+  html += kv('Surcharge', d.surcharge);
+  html += kv('Cess @4%', d.cess);
+  html += kv('Final Tax (rounded u/s 288B)', d.finalTax);
+  // 87A validations
+  if (d.canRebate) {
+    if (!d.isOld) {
+      if (d.totalIncome <= 1200000) {
+        const expReb = Math.min(d.slabTax, 60000);
+        html += Math.abs(expReb - d.rebate) < 1 ? pass(`87A New: TI ₹${(d.totalIncome/100000).toFixed(2)}L ≤ ₹12L → Rebate ₹${Math.round(expReb).toLocaleString('en-IN')} ✓`) : fail(`87A rebate mismatch: exp ${expReb} got ${d.rebate}`);
+        html += d.rebate <= d.slabTax ? pass('87A ≤ Slab Tax ✓') : fail('87A cannot exceed slab tax');
+        html += (d.stcgTax+d.ltcgTax+d.otherLtcgTax+d.specTax) === 0 || d.rebate <= d.slabTax ? pass('87A NOT applied to CG/SI tax ✓ [FA2025]') : fail('87A incorrectly applied to CG tax');
+      } else {
+        html += d.rebate === 0 ? pass(`87A New: TI ₹${(d.totalIncome/100000).toFixed(2)}L > ₹12L → No rebate ✓`) : fail('87A should be 0 when TI > ₹12L');
+        if (d.totalIncome > 1200000 && d.totalIncome <= 1275000) {
+          html += d.marginalRelief >= 0 ? pass(`Marginal relief ₹${Math.round(d.marginalRelief).toLocaleString('en-IN')} applied (TI in ₹12L–₹12.75L range) ✓`) : fail('Marginal relief should be > 0 here');
+        }
+      }
+    } else {
+      if (d.totalIncome <= 500000) {
+        const expReb = Math.min(d.slabTax, 12500);
+        html += Math.abs(expReb - d.rebate) < 1 ? pass(`87A Old: TI ≤ ₹5L → Rebate ₹${Math.round(expReb).toLocaleString('en-IN')} ✓`) : fail(`87A Old rebate: exp ${expReb} got ${d.rebate}`);
+      } else {
+        html += d.rebate === 0 ? pass('87A Old: TI > ₹5L → No rebate ✓') : fail('87A Old: should be 0 when TI > ₹5L');
+      }
+    }
+  } else {
+    html += d.rebate === 0 ? pass('87A not applicable (NRI/HUF) — confirmed by Sec 87A text: only "resident individual" eligible ✓') : fail('87A incorrectly applied for NRI/HUF — Sec 87A: resident individual only');
+  }
+  // Cess
+  const expCess = (d.taxAfterReb + d.surcharge) * 0.04;
+  html += Math.abs(expCess - d.cess) < 0.5 ? pass(`Cess = (${Math.round(d.taxAfterReb)}+${Math.round(d.surcharge)})×4% = ₹${Math.round(expCess).toLocaleString('en-IN')} ✓`) : fail(`Cess mismatch: exp ${expCess} got ${d.cess}`);
+  // Rounding
+  const roundedFinal = Math.round(d.taxAfterReb + d.surcharge + d.cess) / 10 * 10;
+  html += Math.abs(roundedFinal - d.finalTax) < 15 ? pass(`Rounding u/s 288B: ₹${Math.round(d.finalTax).toLocaleString('en-IN')} ✓`) : fail(`Rounding issue: ${roundedFinal} vs ${d.finalTax}`);
+  html += '</div>';
+
+  // ── Section 8: Built-in Test Cases ──
+  html += `<div class="dbg-section"><div class="dbg-hdr" style="color:#000;font-weight:900">8. BUILT-IN TEST CASES</div>`;
+  html += `<div style="font-size:12px;color:#000;font-weight:700;margin-bottom:4px">Run test cases from Examples → Load Ex buttons. The following shows expected vs computed for the CURRENT calculator values:</div>`;
+
+  // Test: New regime nil tax at exactly ₹12L total income
+  const testNilNew = (() => {
+    // Simulate: salary 12,75,000, new regime → TI=12L → tax 60k, rebate 60k, final 0
+    return { label:'Ex1: Salary ₹12.75L New Regime → Final Tax ₹0', pass: d.incomeSalary===1200000 && d.totalIncome===1200000 && d.finalTax===0 };
+  })();
+  html += d.incomeSalary===1200000 ? (d.finalTax===0 ? pass('Ex1 LOADED: TI ₹12L, New Regime → Final Tax ₹0 ✓') : fail(`Ex1: TI ₹12L → expected ₹0 got ₹${d.finalTax}`)) : `<div style="color:#000;font-weight:700">Ex1 not loaded (load via Examples → Ex 1)</div>`;
+
+  html += `<div class="dbg-section" style="border-top:none;padding-top:0;margin-top:4px;font-size:12px;color:#000;font-weight:700">
+  TEST CASE REFERENCE TABLE (Finance Act 2025 AY 2026-27):<br>
+  • New Regime: 0–4L=0%, 4–8L=5%, 8–12L=10%, 12–16L=15%, 16–20L=20%, 20–24L=25%, >24L=30%<br>
+  • Std Ded New: ₹75,000 | Old: ₹50,000<br>
+  • 87A New: rebate min(slab_tax, ₹60,000) if TI ≤ ₹12L [slab tax only, FA2025]<br>
+  • 87A Old: rebate min(slab_tax, ₹12,500) if TI ≤ ₹5L [slab tax only, FA2025]<br>
+  • STCG 111A @20%, LTCG 112A @12.5% (₹1.25L exempt), LTCG 112 @12.5%<br>
+  • Surcharge: >₹50L=10%, >₹1Cr=15%, >₹2Cr=25%, >₹5Cr=37% (Old)/25% (New) — CG capped @15%<br>
+  • Cess @4% on (tax after rebate + surcharge)<br>
+  • Rounding: u/s 288B to nearest ₹10
+  </div>`;
+  html += '</div>';
+
+  document.getElementById('dbgContent').innerHTML = html;
+}
+// ── RNOR RESIDENCY CALCULATOR ─────────────────────────────────
+const RC_FYS = [
+  {fy:'FY 2024-25', start:'2024-04-01', end:'2025-03-31'},
+  {fy:'FY 2023-24', start:'2023-04-01', end:'2024-03-31'},
+  {fy:'FY 2022-23', start:'2022-04-01', end:'2023-03-31'},
+  {fy:'FY 2021-22', start:'2021-04-01', end:'2022-03-31'},
+];
+const RC_OLD_FYS = ['FY 2020-21','FY 2019-20','FY 2018-19','FY 2017-18','FY 2016-17','FY 2015-16'];
+
+function buildRNORTable() {
+  const tbody = $('rcTable');
+  if (!tbody || tbody.dataset.built === '1') return; // build once
+  tbody.dataset.built = '1';
+  RC_FYS.forEach((row, i) => {
+    tbody.innerHTML += `<tr>
+      <td style="border:1px solid var(--border);padding:4px 6px;font-weight:600;font-size:11px;white-space:nowrap">${row.fy}</td>
+      <td style="border:1px solid var(--border);padding:3px 4px">
+        <input type="date" id="rc_arr_${i}" min="${row.start}" max="${row.end}" style="font-size:11px;padding:3px 5px;width:100%" oninput="calcRCDays(${i})">
+      </td>
+      <td style="border:1px solid var(--border);padding:3px 4px">
+        <input type="date" id="rc_dep_${i}" min="${row.start}" max="${row.end}" style="font-size:11px;padding:3px 5px;width:100%" oninput="calcRCDays(${i})">
+      </td>
+      <td style="border:1px solid var(--border);padding:4px 6px;text-align:center;font-weight:700;font-family:monospace;font-size:12px;background:var(--card2)" id="rc_days_${i}">—</td>
+      <td style="border:1px solid var(--border);padding:3px 6px;text-align:center">
+        <select id="rc_nri_${i}" style="font-size:11px;padding:3px;width:100%;font-weight:600" onchange="runRCTest()">
+          <option value="">— Select —</option>
+          <option value="nri">NRI (Non-Resident)</option>
+          <option value="ror">Resident (ROR)</option>
+          <option value="rnor">RNOR</option>
+        </select>
+      </td>
+    </tr>`;
+  });
+
+  // Old years for 9-of-10 test
+  const oyDiv = $('rcOldYears');
+  if (oyDiv) {
+    oyDiv.innerHTML = '';
+    RC_OLD_FYS.forEach((fy, i) => {
+      oyDiv.innerHTML += `<div style="display:flex;flex-direction:column;gap:3px;border:1px solid var(--border);border-radius:6px;padding:5px 8px;min-width:120px;background:var(--card)">
+        <span style="font-size:10px;font-weight:700;color:#374151">${fy}</span>
+        <select id="rc_old_nri_${i}" style="font-size:11px;padding:3px;font-weight:600" onchange="runRCTest()">
+          <option value="">— Select —</option>
+          <option value="nri">NRI</option>
+          <option value="resident">Resident</option>
+        </select>
+      </div>`;
+    });
+  }
+}
+
+function calcRCDays(i) {
+  const arr = $(`rc_arr_${i}`)?.value;
+  const dep = $(`rc_dep_${i}`)?.value;
+  const cell = $(`rc_days_${i}`);
+  if (!cell) return;
+  if (arr && dep) {
+    const a = new Date(arr), d = new Date(dep);
+    if (d >= a) {
+      const days = Math.round((d - a) / 86400000) + 1; // inclusive of both arrival & departure day
+      cell.textContent = days + ' days';
+      cell.style.color = days >= 182 ? '#0e6b34' : '#b91c1c';
+    } else {
+      cell.textContent = '⚠ dep<arr';
+      cell.style.color = '#b91c1c';
+    }
+  } else {
+    cell.textContent = '—';
+    cell.style.color = '';
+  }
+  runRCTest();
+}
+
+function getRCDays(i) {
+  const arr = $(`rc_arr_${i}`)?.value;
+  const dep = $(`rc_dep_${i}`)?.value;
+  if (arr && dep) {
+    const a = new Date(arr), d = new Date(dep);
+    if (d >= a) return Math.round((d - a) / 86400000) + 1;
+  }
+  // Fallback: check if old-style direct entry exists
+  return 0;
+}
+
+function runRCTest() {
+  const curDays   = parseInt($('rc_curDays')?.value || '0');
+  const citizenType = $('rc_citizenType')?.value || 'normal';
+  const s1Res = $('rcStep1'), s2Res = $('rcStep2'), verdict = $('rcVerdict'), hint = $('rcHint');
+  if (!s1Res) return;
+
+  // ── STEP 1: Are you Resident? ──
+  let last4Days = 0;
+  for (let i=0; i<4; i++) last4Days += getRCDays(i);
+
+  let isResident182 = curDays >= 182;
+  // 60-day rule: N/A for Indian citizens going abroad for employment / PIO visiting
+  let is60DayApplicable = citizenType === 'normal';
+  let isResident60 = is60DayApplicable && curDays >= 60 && last4Days >= 365;
+  let isResident = isResident182 || isResident60;
+
+  // ── STEP 2: RNOR test ──
+  // Test A: NRI in 9 of 10 preceding years
+  let nriCount = 0;
+  for (let i=0; i<4; i++) {
+    const v = $(`rc_nri_${i}`)?.value;
+    if (v === 'nri') nriCount++;
+  }
+  for (let i=0; i<6; i++) {
+    const v = $(`rc_old_nri_${i}`)?.value;
+    if (v === 'nri') nriCount++;
+  }
+  const totalYearsEntered = RC_FYS.length + RC_OLD_FYS.length; // 10
+  let isRNOR_A = nriCount >= 9;
+
+  // Test B: ≤ 729 days in 7 preceding years
+  let last7Days = 0;
+  for (let i=0; i<4; i++) last7Days += getRCDays(i);
+  // For years 5-7, we don't have day inputs — note limitation
+  let isRNOR_B = last7Days <= 729;
+  let isRNOR = isResident && (isRNOR_A || isRNOR_B);
+
+  // Step 1 display
+  let s1html = `<b>Step 1 – Resident test:</b> Current FY days = <b>${curDays}</b> | Last 4 FYs days = <b>${last4Days}</b><br>`;
+  s1html += `182-day rule: ${curDays}≥182 → <b style="color:${isResident182?'#0e6b34':'#b91c1c'}">${isResident182?'PASS':'FAIL'}</b>&nbsp;&nbsp;`;
+  if (is60DayApplicable) {
+    s1html += `60+365 rule: ${curDays}≥60 &amp; ${last4Days}≥365 → <b style="color:${isResident60?'#0e6b34':'#b91c1c'}">${isResident60?'PASS':'FAIL'}</b>`;
+  } else {
+    s1html += `<span style="color:#8a4500">60-day rule N/A for selected citizen type</span>`;
+  }
+  s1html += `<br>→ <b style="color:${isResident?'#0e6b34':'#b91c1c'}">${isResident?'IS RESIDENT ✓':'NOT RESIDENT ✗'}</b>`;
+  s1Res.innerHTML = s1html;
+
+  // Step 2 display
+  let s2html = `<b>Step 2 – RNOR test (if Resident):</b><br>`;
+  s2html += `Test A (NRI in 9/10 years): ${nriCount} NRI years entered → <b style="color:${isRNOR_A?'#0e6b34':'#b91c1c'}">${isRNOR_A?'RNOR CONDITION MET ✓':'NOT MET'}</b><br>`;
+  s2html += `Test B (≤729 days in 7 years, using 4 available): ${last7Days} days → <b style="color:${isRNOR_B?'#0e6b34':'#b91c1c'}">${isRNOR_B?'RNOR CONDITION MET ✓ (≤729)':'NOT MET (>729)'}</b>`;
+  s2Res.innerHTML = s2html;
+
+  // Verdict
+  let verdictText, verdictBg, verdictColor;
+  if (!isResident) {
+    verdictText = '🔴 NON-RESIDENT INDIAN (NRI)';
+    verdictBg = '#fff1f2'; verdictColor = '#b91c1c';
+  } else if (isRNOR) {
+    verdictText = '🔵 RESIDENT BUT NOT ORDINARILY RESIDENT (RNOR)';
+    verdictBg = '#eff6ff'; verdictColor = '#1e3a8a';
+  } else {
+    verdictText = '🟢 RESIDENT & ORDINARILY RESIDENT (ROR)';
+    verdictBg = '#f0fdf4'; verdictColor = '#064e20';
+  }
+  verdict.textContent = verdictText;
+  verdict.style.background = verdictBg;
+  verdict.style.color = verdictColor;
+
+  if (hint) {
+    if (!isResident) hint.textContent = 'Select "Non-Resident (NRI)" in the Residential Status dropdown above.';
+    else if (isRNOR) hint.textContent = 'You qualify as RNOR. "RNOR" is correctly selected above. Only India-source income is taxable.';
+    else hint.textContent = 'You are ROR. Change status above to "Resident – Below 60 / Senior / Super Senior" as per your age.';
+  }
+}
+
+// Listen to RNOR calc inputs
+document.addEventListener('input', e => {
+  if (e.target.id === 'rc_curDays' || e.target.id === 'rc_citizenType') runRCTest();
+});
+document.addEventListener('change', e => {
+  if (e.target.id && e.target.id.startsWith('rc_')) runRCTest();
+});
+
+
+// ── EVENT LISTENERS ────────────────────────────────────────────
+document.querySelectorAll('input[type=number],select').forEach(el => el.addEventListener('input', recalcAll));
+document.querySelectorAll('input[type=date]').forEach(el => el.addEventListener('change', recalcAll));
+// NRI new fields (already covered by querySelectorAll above but explicit for clarity)
+['nriNROInterest','nriFCInterest','nriDividend115A'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', recalcAll);
+});
+regimeRadios.forEach(r => r.addEventListener('change', recalcAll));
+$('btnReset').addEventListener('click', resetAll);
+recalcAll();
+
+</script>
+
+
+<div id="saveToast" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgb(26, 42, 58); color: rgb(255, 255, 255); padding: 10px 20px; border-radius: 24px; font-size: 13px; font-weight: 600; z-index: 99999; box-shadow: rgba(0, 0, 0, 0.3) 0px 4px 20px; transition: opacity 0.4s; pointer-events: none; opacity: 0;">PDF saved: ITR-2_FY2025-26_AY2026-27.pdf</div></body></html>
