@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITR2 Calculator FY2025-26</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        // Check for Service Worker support and register it
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch(err => {
+                    console.error('Service Worker registration failed:', err);
+                });
+            });
+        }
+
+        // Local storage for data persistence
+        function saveData() {
+            const inputData = document.getElementById('inputField').value;
+            localStorage.setItem('taxCalculatorData', inputData);
+        }
+
+        function loadData() {
+            const savedData = localStorage.getItem('taxCalculatorData');
+            if (savedData) {
+                document.getElementById('inputField').value = savedData;
+            }
+        }
+
+        window.onload = loadData;
+    </script>
+</head>
+<body>
+    <h1>ITR2 Calculator for FY2025-26</h1>
+    <input type="text" id="inputField" placeholder="Enter your data">
+    <button onclick="saveData()">Save Data</button>
+    <p>Enter your details in the field above, and it will be saved for future access.</p>
+</body>
+</html>
